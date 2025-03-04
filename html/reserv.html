@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>رزرو نوبت </title>
+  <link rel="stylesheet" href="../css/reserv.css" />
+  <script
+    src="https://kit.fontawesome.com/64d58efce2.js"
+    crossorigin="anonymous"
+  ></script>
+</head>
+<body>
+  <div class="container">
+    <span class="big-circle"></span>
+    <form id="consultationForm" method="POST" action="../php/save_request.php">
+      <div class="form">
+        <div class="contact-info">     
+          <h3 class="title">ثبت درخواست</h3>
+          <div class="info">
+            <div class="information">
+              <div class="input-container">
+                <input type="text" name="full_name" class="input" required />
+                <label for="full_name">نام و نام خانوادگی</label>
+                <span>Username</span>
+              </div>
+              <div class="input-container">
+                <input type="email" name="email" class="input" required />
+                <label for="email">ایمیل</label>
+                <span>Email</span>
+              </div>
+              <div class="input-container">
+                <input type="tel" name="phone" class="input" required />
+                <label for="phone">شماره تماس</label>
+                <span>Phone</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="contact-form">
+          <span class="circle one"></span>
+          <span class="circle two"></span>
+          <div class="input-container">
+            <p class="p-time">یک نوبت انتخاب کنید ●</p>
+            <input type="datetime-local" name="appointment_time" class="input2 input" required />
+          </div>
+          <input type="submit" value="ثبت درخواست" class="btn" />
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <script src="../js/app.js"></script>
+</body>
+</html>

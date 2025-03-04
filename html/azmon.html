@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>آزمون سلامت دندان</title>
+    <link rel="stylesheet" href="../css/azmon.css">
+</head>
+<body dir="rtl">
+<div class="container">
+    <form id="dental-health-form" action="../php/process_form.php" method="POST">
+        <div class="right">
+            <div class="img">
+                <img src="/image/jerm.jpg" alt="" class="img-moshaver">
+            </div>
+            <div class="right-down">
+                <h1>اطلاعات</h1>
+                <h2>نام و نام خانوادگی:</h2>
+                <input type="text" name="fullname" class="input1" required>
+                <h2>شماره تماس:</h2>
+                <input type="number" name="phone" class="input1" required>
+                <h2>ایمیل:</h2>
+                <input type="email" name="email" class="input1" required>
+            </div>
+        </div>
+        <div class="left">
+            <h1>فرم سلامت دندان</h1>
+            <div class="form-group">
+                <label for="question1">۱. آیا شما به طور منظم مسواک می‌زنید؟</label>
+                <select id="question1" name="question1" required>
+                    <option value="">انتخاب کنید</option>
+                    <option value="twice">بله، دو بار در روز</option>
+                    <option value="once">بله، یک بار در روز</option>
+                    <option value="rarely">خیر، به ندرت</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="question2">۲. آیا دندان‌های شما به سردی یا گرمی حساس هستند؟</label>
+                <select id="question2" name="question2" required>
+                    <option value="">انتخاب کنید</option>
+                    <option value="highly_sensitive">بله، به شدت حساس هستند</option>
+                    <option value="mildly_sensitive">بله، کمی حساس هستند</option>
+                    <option value="not_sensitive">خیر، هیچ حساسیتی ندارم</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="question3">۳. آیا لثه‌های شما هنگام مسواک زدن خونریزی می‌کنند؟</label>
+                <select id="question3" name="question3" required>
+                    <option value="">انتخاب کنید</option>
+                    <option value="always_bleeds">بله، همیشه خونریزی دارند</option>
+                    <option value="occasionally_bleeds">بله، گهگاهی خونریزی دارند</option>
+                    <option value="never_bleeds">خیر، هیچ وقت خونریزی ندارند</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="question4">۴. آیا در ناحیه‌ای از دهانتان درد یا ناراحتی احساس می‌کنید؟</label>
+                <select id="question4" name="question4" required>
+                    <option value="">انتخاب کنید</option>
+                    <option value="severe_pain">بله، درد زیادی دارم</option>
+                    <option value="mild_pain">بله، درد خفیفی دارم</option>
+                    <option value="no_pain">خیر، هیچ دردی ندارم</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="question5">۵. آیا به طور مکرر دندان‌هایتان احساس لق بودن می‌کنند؟</label>
+                <select id="question5" name="question5" required>
+                    <option value="">انتخاب کنید</option>
+                    <option value="teeth_loose">بله، دندان‌هایم لق هستند</option>
+                    <option value="occasionally_loose">خیر، اما گاهی احساس لق بودن دارم</option>
+                    <option value="no_loose">خیر، دندان‌هایم هیچ‌گاه لق نیستند</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="question6">۶. آیا شما دندان‌های خود را با مسواک برقی یا دستی مسواک می‌زنید؟</label>
+                <select id="question6" name="question6" required>
+                    <option value="">انتخاب کنید</option>
+                    <option value="electric_toothbrush">مسواک برقی</option>
+                    <option value="manual_toothbrush">مسواک دستی</option>
+                    <option value="none">هیچکدام</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="question7">۷. آیا دندان‌های شما رنگ زرد یا لکه دارند؟</label>
+                <select id="question7" name="question7" required>
+                    <option value="">انتخاب کنید</option>
+                    <option value="noticeable_yellow">بله، لکه‌ها و زردی واضحی دارم</option>
+                    <option value="slightly_yellow">کمی زردی دارم</option>
+                    <option value="white_and_healthy">خیر، دندان‌هایم سفید و سالم هستند</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="question8">۸. آیا شما از دهان‌شویه برای مراقبت از دهان استفاده می‌کنید؟</label>
+                <select id="question8" name="question8" required>
+                    <option value="">انتخاب کنید</option>
+                    <option value="daily_use">بله، روزانه</option>
+                    <option value="occasionally_use">بله، گهگاهی</option>
+                    <option value="never_use">خیر، هیچ وقت از دهان‌شویه استفاده نمی‌کنم</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="question9">۹. آیا شما عادت به جویدن یخ یا سایر مواد سخت دارید؟</label>
+                <select id="question9" name="question9" required>
+                    <option value="">انتخاب کنید</option>
+                    <option value="always_chew">بله، همیشه این کار را می‌کنم</option>
+                    <option value="occasionally_chew">گهگاهی این کار را می‌کنم</option>
+                    <option value="never_chew">خیر، هیچ وقت این کار را نمی‌کنم</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="question10">۱۰. آیا شما به دندان‌های خود پر کردن (ترمیم) نیاز دارید؟</label>
+                <select id="question10" name="question10" required>
+                    <option value="">انتخاب کنید</option>
+                    <option value="multiple_fillings">بله، چند دندان پر شده دارند</option>
+                    <option value="potential_fillings">خیر، اما ممکن است در آینده نیاز به پر کردن داشته باشند</option>
+                    <option value="healthy_teeth">خیر، دندان‌هایم سالم هستند</option>
+                </select>
+            </div>
+            
+            
+            <button type="submit">ارسال</button>
+        </div>
+    </form>
+</div>
+</body>
+</html>

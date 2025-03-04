@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>محاسبه هزینه خدمات دندان‌پزشکی</title>
+    <link rel="stylesheet" href="../css/mohasebeh.css">
+</head>
+<body>
+    <div class="main-container">
+        <span class="big-circle"></span>
+        <h1>محاسبه هزینه خدمات دندان‌پزشکی</h1>
+        <form id="serviceForm">
+            <div class="dropdown-section">
+                <label for="services">انتخاب خدمات:</label>
+                <select id="services" name="services">
+                    <option value="cleaning"> پروتز دندانی </option>
+                    <option value="filling">دندان پزشکی  </option>
+                    <option value="whitening">رادیولوژی دهان فک صورت  </option>
+                </select>
+            </div>
+            <!-- نوع خدمت -->
+            <div class="dropdown-section">
+                <label for="serviceType">نوع خدمت:</label>
+                <select id="serviceType" name="serviceType">
+                    <option value="basic">خدمت پایه</option>
+                    <option value="advanced">لمینت</option>
+                    <option value="cosmetic">ارتودنسی</option>
+                    <option value="surgery">جراحی</option>
+                    <option value="emergency">اورژانسی</option>
+                </select>
+            </div>
+            <!-- نام پزشک -->
+            <div class="dropdown-section">
+                <label for="doctor">انتخاب پزشک:</label>
+                <select id="doctor" name="doctor">
+                    <option value="dr-ahmadi">دکتر احمدی</option>
+                    <option value="dr-mohammadi">دکتر محمدی</option>
+                    <option value="dr-karimi">دکتر کریمی</option>
+                </select>
+            </div>
+            <!-- تعداد -->
+            <div class="dropdown-section">
+                <label for="quantity">تعداد:</label>
+                <select id="quantity" name="quantity">
+                    <option value="1">یک دندان</option>
+                    <option value="2">دو دندان</option>
+                    <option value="3">سه دندان</option>
+                    <option value="4">چهار دندان</option>
+                    <option value="jaw">یک فک کامل</option>
+                    <option value="both-jaws">دو فک کامل</option>
+                </select>
+            </div>
+            <!-- بخش کد تخفیف -->
+            <div class="discount-section">
+                <label for="discountCode">کد تخفیف داری؟</label>
+                <input type="text" id="discountCode" name="discountCode" placeholder="کد تخفیف را وارد کنید">
+            </div>
+            <!-- دکمه محاسبه -->
+            <button type="button" id="calculateButton">محاسبه</button>
+            <!-- نمایش هزینه -->
+            <div class="result-section" id="result">
+                هزینه کل نمایش داده می‌شود...
+            </div>
+        </form>
+    </div>
+    <script src="../js/cal.js"></script>
+</body>
+</html>
