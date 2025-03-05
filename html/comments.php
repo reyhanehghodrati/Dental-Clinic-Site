@@ -1,3 +1,31 @@
+<?php
+include('../php/config.php');
+
+$sql='select * from dbo_user_comments';
+
+if (isset($_POST['name'])){$fullName = $_POST['name'];
+    $phone = $_POST['phone'];
+    $comments=$_POST['comment'];
+
+    if (empty($fullName) || empty($phone) || empty($comments)) {
+        $message = "لطفاً تمام فیلدها را پر کنید.";
+        echo $message;
+        exit;
+    }
+
+    $stmt = $conn->prepare("INSERT INTO dbo_user_comments (name,phone, comment) VALUES (?, ?, ?)");
+    $stmt->bind_param("sis", $fullName, $phone, $comments);
+
+    if ($stmt->execute()) {
+        $message = "نظر شما با موفقیت ثبت شد.";
+        echo $message;
+    } else {
+        $message = "خطا در ثبت نظر: " . $stmt->error;
+        echo $message;
+    }}
+
+?>
+
 
 
 <!DOCTYPE html>
@@ -5,7 +33,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ثبت نظرات </title>
+  <title>مشاوره آنلاین</title>
   <link rel="stylesheet" href="../css/moshaver.css" />
   <script src="https://kit.fontawesome.com/64d58efce2.js" crossorigin="anonymous"></script>
 </head>
@@ -47,7 +75,7 @@
         <span class="circle one"></span>
         <span class="circle two"></span>
 
-        <form id="consultationForm" method="POST" action="../php/commens.php" autocomplete="off" >
+        <form id="consultationForm" method="POST"  autocomplete="off" >
           <h3 class="title">ثبت درخواست</h3>
           <div class="input-container">
             <input type="text" name="name" class="input" required />
@@ -60,13 +88,12 @@
             <span>Phone</span>
           </div>
           <div class="input-container textarea">
-              <input type="text" name="comment" class="input" required />
+            <textarea name="comment" class="input" required></textarea>
             <label for="comment">نظر شما</label>
             <span>Message</span>
           </div>
           <input type="submit" value="ارسال" class="btn"  />
         </form>
-        <div id="responseMessage" style="margin-top: 20px;"></div>
       </div>
     </div>
   </div>
