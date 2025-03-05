@@ -170,36 +170,26 @@
         <h2>نظرات کاربران</h2>
     </div>
     <div class="review-group">
-        <div class="review-card">
-            <img src="../image/image6.jpg" alt="User 1">
-            <h3> مهیار خدابنده </h3>
-            <div class="rating">★★★★☆</div>
-            <p>
-                من از خدمات این کلینیک بسیار راضی هستم. کارکنان حرفه‌ای و فضای بسیار دلپذیری دارند. 
-                تیم پشتیبانی همیشه با دقت و توجه پاسخ‌گو بودند و تمامی نیازهای من را برآورده کردند. 
-                قطعا این کلینیک را به دوستان و خانواده‌ام توصیه می‌کنم.
-            </p>
-        </div>
-        <div class="review-card">
-            <img src="../image/image5.jpg" alt="User 2">
-            <h3>ریحانه قدرتی </h3>
-            <div class="rating">★★★★★</div>
-            <p>
-                خدمات بی‌نظیر! تجربه بسیار خوبی داشتم و دندانپزشکان اینجا واقعا حرفه‌ای هستند.
-                همچنین تجهیزات به‌روز و پیشرفته‌ای که دارند، بسیار اطمینان‌بخش است. 
-                از اینکه این کلینیک را انتخاب کردم خوشحالم.
-            </p>
-        </div>
-        <div class="review-card">
-            <img src="../image/image4.jpg "alt="User 3">
-            <h3>فاطمه اکرامی </h3>
-            <div class="rating">★★★☆☆</div>
-            <p>
-                کیفیت خدمات خوب بود، اما انتظار داشتم زمان کمتری منتظر بمانم. 
-                با این حال کارکنان بسیار مودب بودند و محیط هم آرامش‌بخش بود. 
-                شاید در آینده دوباره این کلینیک را انتخاب کنم.
-            </p>
-            <div class="add-button">+</div>
+        <?php
+        include('../php/config.php');
+        $sql = "SELECT * FROM dbo_user_comments ";
+        $result = mysqli_query($conn , $sql);
+        $slider = mysqli_fetch_assoc($result);
+        ?>
+        <section class="homepage">
+            <?php
+            $slider_query = "SELECT * FROM dbo_user_comments";
+            $slider_result = mysqli_query($conn, $slider_query);
+            while ($slider = mysqli_fetch_assoc($slider_result)) { ?>
+                <div class="review-card">
+                    <h1><?php echo $slider['name'] ?? "بدون نام"; ?></h1>
+                    <div class="rating">★★★★☆</div>
+                    <p><?php echo $slider['comment'] ?? "بدون پیام"; ?></p>
+                </div>
+            <?php } ?>
+            <div class="add-button">
+                <a href="comments.php" style="color: white">+</a>
+                </div>
         </div>
     </div>
 </section>

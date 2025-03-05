@@ -14,11 +14,15 @@ $health_test_sql = "SELECT * FROM dental_health_responses"; // جدول مربو
 $consultation_sql = "SELECT * FROM consultation_requests_moshavereh"; // جدول مربوط به مشاوره آنلاین
 $appointment_sql = "SELECT * FROM consultation_requests"; // جدول مربوط به نوبت‌دهی
 $slider_settings = 'SELECT * FROM site_settings ORDER BY priority ASC';
+$comments_sql='select * from dbo_user_comments';
+
 
 $health_test_result = mysqli_query($conn, $health_test_sql);
 $consultation_result = mysqli_query($conn, $consultation_sql);
 $appointment_result = mysqli_query($conn, $appointment_sql);
 $slider_settings_result=mysqli_query($conn,$slider_settings);
+$comments_result=mysqli_query($conn,$comments_sql);
+
 
 $sql = "SELECT * FROM site_settings LIMIT 1";
 $result = mysqli_query($conn , $sql);
@@ -220,6 +224,31 @@ exit();
         </div>
     </section>
     <section>
+        <div class="table-container">
+            <h3> نظرات سایت</h3>
+            <table>
+                <thead>
+                <tr>
+                    <th>نام</th>
+                    <th>شماره تماس</th>
+                    <th>نظر</th>
+                    <th>عملیات</th>
+                </tr>
+                </thead>
+                <tbody>
+                <?php while ($row = mysqli_fetch_assoc($comments_result)) { ?>
+                    <tr>
+                        <td><?php echo $row['name']; ?></td>
+                        <td><?php echo $row['phone']; ?></td>
+                        <td><?php echo $row['comment']; ?></td>
+                        <td><a href="delete_comment.php?id=<?= $row["id"] ?> "methods="get" onclick="return confirm('ایا مطمین هستید')" >حذف     </a>
+                        </td>
+
+                    </tr>
+                <?php } ?>
+                </tbody>
+            </table>
+        </div>
         <div class="table-container">
             <h3>درخواست‌های آزمون سلامت دندان</h3>
             <table class="tb">
