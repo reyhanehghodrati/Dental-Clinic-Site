@@ -92,6 +92,23 @@ if (isset($_POST['name'])){$fullName = $_POST['name'];
             <label for="comment">نظر شما</label>
             <span>Message</span>
           </div>
+            <div class="input-container textarea">
+                    <input
+                            type="text"
+                            placeholder=" a b c e d 0"
+                            disabled
+                            class="input-field disable input"
+                    />
+                    <button type="button" class="btn">تغییر</button>
+            </div>
+            <div class="input-container textarea">
+                    <input
+                            type="text"
+                            placeholder="Enter Your Captcha"
+                            class="input-field captcha input"
+                    />
+            </div>
+            <br>
           <input type="submit" value="ارسال" class="btn"  />
         </form>
       </div>
