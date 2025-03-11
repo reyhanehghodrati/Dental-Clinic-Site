@@ -131,7 +131,7 @@ textarea.input {
 }
 
 .btn {
-  padding: 0.6rem 1.3rem;
+
   background-color: #2d7fe3;
   border: 0;
   font-size: 0.95rem;
@@ -294,6 +294,7 @@ textarea.input {
   transform: translate(181%, 11%);
   opacity: 0.2;
 }
+
 
 @media (max-width: 850px) {
   .form {

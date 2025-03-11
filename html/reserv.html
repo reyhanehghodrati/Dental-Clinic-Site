@@ -9,6 +9,46 @@
     src="https://kit.fontawesome.com/64d58efce2.js"
     crossorigin="anonymous"
   ></script>
+  <style>
+    .docks{
+      display: flex;
+      background-color: #fafafa;
+      height: 70px;
+      padding-right: 60px;
+      padding-bottom: 10px;
+      border-radius: 25px;
+      margin: 7px;
+    }
+    .doc_img{
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      padding-top: 15px;
+      padding-left: 15px;
+    }
+    .btn-t{
+      background-color: #2d7fe3;
+      padding: 10px;
+      border: 0;
+      font-size: 0.85rem;
+      color: #fafafa;
+      height: 40px;
+      width: 80px;
+      margin-top: 20px;
+      border-radius: 25px;
+      outline: none;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .btn-t:hover {
+      background-color: transparent;
+      color: #333;
+      background-color: #7fd1ed;
+    }
+    .tt{
+      margin-left: 20px;
+    }
+  </style>
 </head>
 <body>
   <div class="container">
@@ -43,9 +83,28 @@
           <span class="circle two"></span>
           <div class="input-container">
             <p class="p-time">یک نوبت انتخاب کنید ●</p>
-            <input type="datetime-local" name="appointment_time" class="input2 input" required />
+<!--            <input type="datetime-local" name="appointment_time" class="input2 input" required />-->
+            <div class="docks" dir="rtl">
+              <img class="doc_img" src="https://storage.darmankade.com/public/images/doctor/-3735539088958595570.webp" >
+              <div><h4>دکتر میلاد رنجبرانی</h4>
+                <h5>متخصص پروتز های دندانی</h5></div>
+              <button class="btn-t"> رزرو نوبت</button>
+            </div>
+            <div class="docks" dir="rtl">
+              <img class="doc_img" src="https://storage.darmankade.com/public/images/doctor/-5212151467760930765.PNG" >
+              <div ><h4>دکتر مهدی سلطانیان</h4>
+                <h5>متخصص جراحی دهان و فک </h5></div>
+              <button class="btn-t"> رزرو نوبت</button>
+            </div>
+            <div class="docks" dir="rtl">
+              <img class="doc_img" src="https://storage.darmankade.com/public/images/doctor/-6706642858205703586.JPG" >
+              <div class="tt"><h4>دکتر حمیدرضا نجفی</h4>
+                <h5>دندانپزشک</h5></div>
+              <button class="btn-t"> رزرو نوبت</button>
+            </div>
+
           </div>
-          <input type="submit" value="ثبت درخواست" class="btn" />
+          <input type="submit" value="ثبت درخواست" class="btn " />
         </div>
       </div>
     </form>
