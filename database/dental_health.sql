@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 11, 2025 at 01:24 PM
+-- Generation Time: Mar 12, 2025 at 12:57 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -32,9 +32,20 @@ CREATE TABLE `consultation_requests` (
   `full_name` varchar(255) NOT NULL,
   `email` varchar(255) NOT NULL,
   `phone` varchar(20) NOT NULL,
-  `appointment_time` datetime NOT NULL,
+  `docter` varchar(255) NOT NULL,
+  `nobat` varchar(255) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `consultation_requests`
+--
+
+INSERT INTO `consultation_requests` (`id`, `full_name`, `email`, `phone`, `docter`, `nobat`, `created_at`) VALUES
+(2, 'ریحانه قدرتی نسب', 'reyhanghodrati@gmail.com', '02156323544', 'dr-ahmadi', 'شنبه 25 اسفند - 14-16', '2025-03-12 10:40:08'),
+(3, 'ریحانه قدرتی نسب', 'reyhanghodrati@gmail.com', '02156323544', 'dr-ahmadi', 'شنبه 25 اسفند - 14-16', '2025-03-12 11:00:15'),
+(4, 'ریحانه قدرتی نسب', 'reyhanghodrati@gmail.com', '09109253995', 'dr-mohammadi', 'شنبه 25 اسفند - 14-16', '2025-03-12 11:35:54'),
+(5, 'ریحانه قدرتی نسب', 'reyhanghodrati@gmail.com', '09109253995', 'dr-ahmadi', 'شنبه 25 اسفند - 14-16', '2025-03-12 11:36:01');
 
 -- --------------------------------------------------------
 
@@ -200,7 +211,7 @@ ALTER TABLE `wh_users`
 -- AUTO_INCREMENT for table `consultation_requests`
 --
 ALTER TABLE `consultation_requests`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `consultation_requests_moshavereh`
