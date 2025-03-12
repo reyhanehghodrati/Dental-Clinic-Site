@@ -140,6 +140,9 @@
       background-color: #e3f2fd;
       transform: scale(1.05);
     }
+    .selected {
+      background-color: #007bff !important;
+      color: white !important;}
   </style>
 </head>
 <body>
@@ -167,8 +170,7 @@
                 <span>Phone</span>
               </div>
               <div class="input-container">
-                <input type="text" name="nobat" class="input" readonly />
-                <label for="nobat">نوبت</label>
+                <input type="text" name="nobat" id="nobat" class="input" readonly />
                 <span>Phone</span>
               </div>
             </div>
@@ -180,26 +182,6 @@
           <span class="circle two"></span>
           <div class="input-container">
             <p class="p-time">یک نوبت انتخاب کنید ●</p>
-<!--            <input type="datetime-local" name="appointment_time" class="input2 input" required />-->
-<!--            <div class="docks" dir="rtl">-->
-<!--              <img class="doc_img" src="https://storage.darmankade.com/public/images/doctor/-3735539088958595570.webp" >-->
-<!--              <div><h4>دکتر میلاد رنجبرانی</h4>-->
-<!--                <h5>متخصص پروتز های دندانی</h5></div>-->
-<!--              <button class="btn-t"> رزرو نوبت</button>-->
-<!--            </div>-->
-<!--            <div class="docks" dir="rtl">-->
-<!--              <img class="doc_img" src="https://storage.darmankade.com/public/images/doctor/-5212151467760930765.PNG" >-->
-<!--              <div ><h4>دکتر مهدی سلطانیان</h4>-->
-<!--                <h5>متخصص جراحی دهان و فک </h5></div>-->
-<!--              <button class="btn-t"> رزرو نوبت</button>-->
-<!--            </div>-->
-<!--            <div class="docks" dir="rtl">-->
-<!--              <img class="doc_img" src="https://storage.darmankade.com/public/images/doctor/-6706642858205703586.JPG" >-->
-<!--              <div class="tt"><h4>دکتر حمیدرضا نجفی</h4>-->
-<!--                <h5>دندانپزشک</h5></div>-->
-<!--              <button class="btn-t" > رزرو نوبت</button>-->
-<!--            </div>-->
-            <!-- نام پزشک -->
             <div class="dropdown-section">
               <label for="doctor" id="p-time">انتخاب پزشک:</label>
               <select id="doctor" name="doctor">
@@ -210,29 +192,27 @@
             </div>
           </div>
           <div class="t-reserv">
-            <span >9-12</span>
-            <span >14-16</span>
-            <span >18-19</span>
+            <span class="time" data-time="9-12">9-12</span>
+            <span class="time"data-time="14-16" >14-16</span>
+            <span class="time" data-time="18-19">18-19</span>
           </div>
           <div class="reserv">
             <div class="blog-section">
-<!--              <h2>مجله آموزش  </h2>-->
               <div class="blog-container">
-                <div class="blog-card">
+                <div class="blog-card day"  data-day="شنبه 25 اسفند">
                   <h3>شنبه</h3>
                   <p>25 اسفند</p>
                 </div>
-                <div class="blog-card">
+                <div class="blog-card day" data-day="یکشنبه 26 اسفند">
                   <h3>یکشنبه</h3>
                   <p>26 اسفند</p>
                 </div>
-                <div class="blog-card">
+                <div class="blog-card day"  data-day="دوشنبه 27 اسفند">
                   <h3>دوشنبه</h3>
                   <p>27 اسفند</p>
                 </div>
                 <button id="scrollButton">مشاهده بیشتر</button>
               </div>
-
             </div>
           </div>
           <input type="submit" value="ثبت درخواست" class="btn " />
@@ -240,7 +220,34 @@
       </div>
     </form>
   </div>
+  <script>
+    let selectedDay = "";
+    let selectedTime = "";
 
+    document.querySelectorAll(".day").forEach(day => {
+      day.addEventListener("click", function () {
+        document.querySelectorAll(".day").forEach(d => d.classList.remove("selected"));
+        this.classList.add("selected");
+        selectedDay = this.getAttribute("data-day").trim();
+        updateAppointmentField();
+      });
+    });
+
+    document.querySelectorAll(".time").forEach(time => {
+      time.addEventListener("click", function () {
+        document.querySelectorAll(".time").forEach(t => t.classList.remove("selected"));
+        this.classList.add("selected");
+        selectedTime = this.getAttribute("data-time").trim();
+        updateAppointmentField();
+      });
+    });
+
+    function updateAppointmentField() {
+      if (selectedDay && selectedTime) {
+        document.getElementById("nobat").value = selectedDay + " - " + selectedTime;
+      }
+    }
+  </script>
   <script src="../js/app.js"></script>
 </body>
 </html>
