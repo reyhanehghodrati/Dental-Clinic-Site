@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>رزرو نوبت </title>
   <link rel="stylesheet" href="../css/reserv.css" />
+  <link rel="stylesheet" href="../css/mohasebeh.css"/>
   <script
     src="https://kit.fontawesome.com/64d58efce2.js"
     crossorigin="anonymous"
@@ -48,6 +49,97 @@
     .tt{
       margin-left: 20px;
     }
+    .btn{
+      margin-top:40px;
+      margin-right: 35%;
+
+    }
+    .form{
+      height: 500px;
+    }
+    #p-time{
+      position: relative;
+      margin-right: 10px;
+      font-size: 1rem;
+      font-weight: bold;
+    }
+    .reserv{
+      /*background-color: #da4453;*/
+      width: 90%;
+      height: 150px;
+      margin: 20px;
+      margin-top: -35px;
+    }
+    .blog-section {
+      margin: 50px auto;
+      text-align: center;
+      width: 90%;
+    }
+
+    .blog-section h2 {
+      margin-bottom: 20px;
+    }
+
+    .blog-container {
+      display: flex;
+      overflow-x: auto;
+      gap: 20px;
+      padding: 20px 0;
+      scroll-behavior: smooth;
+    }
+
+    .blog-card {
+      flex: 0 0 100px;
+      background-color: #fff;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      padding: 15px;
+      cursor: pointer;
+    }
+    .blog-card p {
+      font-size: 1rem;
+      color: #333;
+      margin: 10px 0;
+    }
+
+    #scrollButton {
+      margin-top: 30px;
+      padding: 10px 20px;
+      font-size: 1rem;
+      color: #fff;
+      background-color: #007bff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.3s ease;
+      height: 100%;
+    }
+
+    #scrollButton:hover {
+      background-color: #0056b3;
+      transform: scale(1.05);
+    }
+    .t-reserv span {
+         display: inline-block;
+         background-color: #ffffff;
+         border-radius: 15px;
+         border: 2px solid #007bff;
+         padding: 10px 15px;
+         margin: 10px;
+         margin-right: 10%;
+         text-align: center;
+         color: #007bff;
+         cursor: pointer;
+         transition: all 0.3s ease-in-out;
+
+       }
+
+    .t-reserv span:hover {
+      background-color: #e3f2fd;
+      transform: scale(1.05);
+    }
   </style>
 </head>
 <body>
@@ -74,6 +166,11 @@
                 <label for="phone">شماره تماس</label>
                 <span>Phone</span>
               </div>
+              <div class="input-container">
+                <input type="text" name="nobat" class="input" readonly />
+                <label for="nobat">نوبت</label>
+                <span>Phone</span>
+              </div>
             </div>
           </div>
         </div>
@@ -84,25 +181,59 @@
           <div class="input-container">
             <p class="p-time">یک نوبت انتخاب کنید ●</p>
 <!--            <input type="datetime-local" name="appointment_time" class="input2 input" required />-->
-            <div class="docks" dir="rtl">
-              <img class="doc_img" src="https://storage.darmankade.com/public/images/doctor/-3735539088958595570.webp" >
-              <div><h4>دکتر میلاد رنجبرانی</h4>
-                <h5>متخصص پروتز های دندانی</h5></div>
-              <button class="btn-t"> رزرو نوبت</button>
+<!--            <div class="docks" dir="rtl">-->
+<!--              <img class="doc_img" src="https://storage.darmankade.com/public/images/doctor/-3735539088958595570.webp" >-->
+<!--              <div><h4>دکتر میلاد رنجبرانی</h4>-->
+<!--                <h5>متخصص پروتز های دندانی</h5></div>-->
+<!--              <button class="btn-t"> رزرو نوبت</button>-->
+<!--            </div>-->
+<!--            <div class="docks" dir="rtl">-->
+<!--              <img class="doc_img" src="https://storage.darmankade.com/public/images/doctor/-5212151467760930765.PNG" >-->
+<!--              <div ><h4>دکتر مهدی سلطانیان</h4>-->
+<!--                <h5>متخصص جراحی دهان و فک </h5></div>-->
+<!--              <button class="btn-t"> رزرو نوبت</button>-->
+<!--            </div>-->
+<!--            <div class="docks" dir="rtl">-->
+<!--              <img class="doc_img" src="https://storage.darmankade.com/public/images/doctor/-6706642858205703586.JPG" >-->
+<!--              <div class="tt"><h4>دکتر حمیدرضا نجفی</h4>-->
+<!--                <h5>دندانپزشک</h5></div>-->
+<!--              <button class="btn-t" > رزرو نوبت</button>-->
+<!--            </div>-->
+            <!-- نام پزشک -->
+            <div class="dropdown-section">
+              <label for="doctor" id="p-time">انتخاب پزشک:</label>
+              <select id="doctor" name="doctor">
+                <option value="dr-ahmadi">"دکتر احمدی " متخصص پروتز های دندانی </option>
+                <option value="dr-mohammadi">"دکتر محمدی" متخصص جراحی دهان و فک </option>
+                <option value="dr-karimi">"  دکتر کریمی " دندانپزشک</option>
+              </select>
             </div>
-            <div class="docks" dir="rtl">
-              <img class="doc_img" src="https://storage.darmankade.com/public/images/doctor/-5212151467760930765.PNG" >
-              <div ><h4>دکتر مهدی سلطانیان</h4>
-                <h5>متخصص جراحی دهان و فک </h5></div>
-              <button class="btn-t"> رزرو نوبت</button>
-            </div>
-            <div class="docks" dir="rtl">
-              <img class="doc_img" src="https://storage.darmankade.com/public/images/doctor/-6706642858205703586.JPG" >
-              <div class="tt"><h4>دکتر حمیدرضا نجفی</h4>
-                <h5>دندانپزشک</h5></div>
-              <button class="btn-t"> رزرو نوبت</button>
-            </div>
+          </div>
+          <div class="t-reserv">
+            <span >9-12</span>
+            <span >14-16</span>
+            <span >18-19</span>
+          </div>
+          <div class="reserv">
+            <div class="blog-section">
+<!--              <h2>مجله آموزش  </h2>-->
+              <div class="blog-container">
+                <div class="blog-card">
+                  <h3>شنبه</h3>
+                  <p>25 اسفند</p>
+                </div>
+                <div class="blog-card">
+                  <h3>یکشنبه</h3>
+                  <p>26 اسفند</p>
+                </div>
+                <div class="blog-card">
+                  <h3>دوشنبه</h3>
+                  <p>27 اسفند</p>
+                </div>
+                <button id="scrollButton">مشاهده بیشتر</button>
+              </div>
 
+            </div>
           </div>
           <input type="submit" value="ثبت درخواست" class="btn " />
         </div>

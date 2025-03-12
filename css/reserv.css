@@ -9,6 +9,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  height: 500px;
 }
 
 .form {
@@ -21,6 +22,7 @@
   overflow: hidden;
   display: grid;
   grid-template-columns: repeat(2, 1fr);
+  height: 500px;
 }
 
 .contact-form {
@@ -64,6 +66,7 @@ form {
   z-index: 10;
   overflow: hidden;
   position: relative;
+  height: 500px;
 }
 .img-moshaver{
   width: 300px;
