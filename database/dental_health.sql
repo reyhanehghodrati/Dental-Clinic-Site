@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 12, 2025 at 12:57 PM
+-- Generation Time: Mar 15, 2025 at 12:52 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -65,6 +65,64 @@ CREATE TABLE `consultation_requests_moshavereh` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `dbo_add_doctors`
+--
+
+CREATE TABLE `dbo_add_doctors` (
+  `id` int(11) NOT NULL,
+  `name` varchar(100) NOT NULL,
+  `takhasos` varchar(100) NOT NULL,
+  `phone` varchar(15) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `dbo_add_doctors`
+--
+
+INSERT INTO `dbo_add_doctors` (`id`, `name`, `takhasos`, `phone`, `created_at`) VALUES
+(152, 'غلامی', 'جراح', '09109253995', '2025-03-15 10:28:16'),
+(154, 'قدرتی', 'دندان ', '0965142856', '2025-03-15 11:38:14');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `dbo_patient`
+--
+
+CREATE TABLE `dbo_patient` (
+  `id` int(11) NOT NULL,
+  `full_name` varchar(255) NOT NULL,
+  `email` varchar(255) NOT NULL,
+  `phone` varchar(20) NOT NULL,
+  `doctor_schedule_id` int(11) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `dbo_schedule_nobat`
+--
+
+CREATE TABLE `dbo_schedule_nobat` (
+  `id` int(11) NOT NULL,
+  `day_of_week` enum('شنبه','یکشنبه','دوشنبه','سه‌شنبه','چهارشنبه','پنجشنبه','جمعه') NOT NULL,
+  `time_slot` varchar(20) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `dbo_schedule_nobat`
+--
+
+INSERT INTO `dbo_schedule_nobat` (`id`, `day_of_week`, `time_slot`) VALUES
+(1, 'دوشنبه', '9-12'),
+(2, 'دوشنبه', '14-16'),
+(3, 'یکشنبه', '14-16');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `dbo_user_comments`
 --
 
@@ -80,18 +138,7 @@ CREATE TABLE `dbo_user_comments` (
 --
 
 INSERT INTO `dbo_user_comments` (`id`, `name`, `phone`, `comment`) VALUES
-(2, 'ریحانه قدرتی', '9109253995', 'هم اینکه در ارسال بسته تاخیر هست هم اینکه جنس فیک بهمون دادن'),
-(3, 'سلیمانژاد', '91256561258', 'ارسال محصول فیک'),
-(24, 'ds', '0', 'bx'),
-(25, 'ds', '0', 'bx'),
-(26, 'ds', '0', 'bx'),
-(27, 'ds', '0', 'bx'),
-(28, 'ds', '0', 'bx'),
-(29, 'ds', '0', 'bx'),
-(30, 'ds', '0', 'bx'),
-(31, 'ds', '0', 'bx'),
-(32, 'ds', '0', 'bx'),
-(33, 'ds', '0', 'bx');
+(2, 'ریحانه قدرتی', '9109253995', 'هم اینکه در ارسال بسته تاخیر هست هم اینکه جنس فیک بهمون دادن');
 
 -- --------------------------------------------------------
 
@@ -116,6 +163,27 @@ CREATE TABLE `dental_health_responses` (
   `question10` text DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `doctor_schedule`
+--
+
+CREATE TABLE `doctor_schedule` (
+  `id` int(11) NOT NULL,
+  `doctor_id` int(11) NOT NULL,
+  `schedule_id` int(11) NOT NULL,
+  `max_capacity` int(11) DEFAULT 5
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `doctor_schedule`
+--
+
+INSERT INTO `doctor_schedule` (`id`, `doctor_id`, `schedule_id`, `max_capacity`) VALUES
+(6, 152, 1, 5),
+(7, 154, 2, 5);
 
 -- --------------------------------------------------------
 
@@ -180,6 +248,25 @@ ALTER TABLE `consultation_requests_moshavereh`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `dbo_add_doctors`
+--
+ALTER TABLE `dbo_add_doctors`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `dbo_patient`
+--
+ALTER TABLE `dbo_patient`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `doctor_schedule_id` (`doctor_schedule_id`);
+
+--
+-- Indexes for table `dbo_schedule_nobat`
+--
+ALTER TABLE `dbo_schedule_nobat`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `dbo_user_comments`
 --
 ALTER TABLE `dbo_user_comments`
@@ -190,6 +277,14 @@ ALTER TABLE `dbo_user_comments`
 --
 ALTER TABLE `dental_health_responses`
   ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `doctor_schedule`
+--
+ALTER TABLE `doctor_schedule`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `doctor_id` (`doctor_id`),
+  ADD KEY `schedule_id` (`schedule_id`);
 
 --
 -- Indexes for table `site_settings`
@@ -220,6 +315,24 @@ ALTER TABLE `consultation_requests_moshavereh`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT for table `dbo_add_doctors`
+--
+ALTER TABLE `dbo_add_doctors`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=155;
+
+--
+-- AUTO_INCREMENT for table `dbo_patient`
+--
+ALTER TABLE `dbo_patient`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `dbo_schedule_nobat`
+--
+ALTER TABLE `dbo_schedule_nobat`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
 -- AUTO_INCREMENT for table `dbo_user_comments`
 --
 ALTER TABLE `dbo_user_comments`
@@ -232,6 +345,12 @@ ALTER TABLE `dental_health_responses`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT for table `doctor_schedule`
+--
+ALTER TABLE `doctor_schedule`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+
+--
 -- AUTO_INCREMENT for table `site_settings`
 --
 ALTER TABLE `site_settings`
@@ -242,6 +361,23 @@ ALTER TABLE `site_settings`
 --
 ALTER TABLE `wh_users`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- Constraints for dumped tables
+--
+
+--
+-- Constraints for table `dbo_patient`
+--
+ALTER TABLE `dbo_patient`
+  ADD CONSTRAINT `dbo_patient_ibfk_1` FOREIGN KEY (`doctor_schedule_id`) REFERENCES `doctor_schedule` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `doctor_schedule`
+--
+ALTER TABLE `doctor_schedule`
+  ADD CONSTRAINT `doctor_schedule_ibfk_1` FOREIGN KEY (`doctor_id`) REFERENCES `dbo_add_doctors` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `doctor_schedule_ibfk_2` FOREIGN KEY (`schedule_id`) REFERENCES `dbo_schedule_nobat` (`id`) ON DELETE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
