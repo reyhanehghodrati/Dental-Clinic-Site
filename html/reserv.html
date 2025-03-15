@@ -176,48 +176,30 @@
             </div>
           </div>
         </div>
-
-        <div class="contact-form">
-          <span class="circle one"></span>
-          <span class="circle two"></span>
           <div class="input-container">
-            <p class="p-time">یک نوبت انتخاب کنید ●</p>
-            <div class="dropdown-section">
-              <label for="doctor" id="p-time">انتخاب پزشک:</label>
-              <select id="doctor" name="docter">
-                <option value="">انتخاب کنید</option>
-                <option value="dr-ahmadi">"دکتر احمدی " متخصص پروتز های دندانی </option>
-                <option value="dr-mohammadi">"دکتر محمدی" متخصص جراحی دهان و فک </option>
-                <option value="dr-karimi">"  دکتر کریمی " دندانپزشک</option>
-              </select>
-            </div>
+            <label for="doctor">انتخاب پزشک:</label>
+            <select id="doctor" name="doctor">
+            <?php include 'get_doctors.php';?>
+            </select>
           </div>
+
           <div class="t-reserv">
-            <span class="time" data-time="9-12">9-12</span>
-            <span class="time"data-time="14-16" >14-16</span>
-            <span class="time" data-time="18-19">18-19</span>
+            <!-- زمان‌های داینامیک از پایگاه داده بارگذاری می‌شوند -->
           </div>
+
           <div class="reserv">
             <div class="blog-section">
               <div class="blog-container">
-                <div class="blog-card day"  data-day="شنبه 25 اسفند">
-                  <h3>شنبه</h3>
-                  <p>25 اسفند</p>
-                </div>
-                <div class="blog-card day" data-day="یکشنبه 26 اسفند">
-                  <h3>یکشنبه</h3>
-                  <p>26 اسفند</p>
-                </div>
-                <div class="blog-card day"  data-day="دوشنبه 27 اسفند">
-                  <h3>دوشنبه</h3>
-                  <p>27 اسفند</p>
-                </div>
-                <button id="scrollButton">مشاهده بیشتر</button>
+                <!-- روزهای داینامیک از پایگاه داده اضافه می‌شوند -->
               </div>
             </div>
           </div>
-          <input type="submit" value="ثبت درخواست" class="btn " />
-        </div>
+
+          <div class="input-container">
+            <input type="text" name="nobat" id="nobat" class="input" readonly />
+          </div>
+
+          <input type="submit" value="ثبت درخواست" class="btn" />
       </div>
     </form>
   </div>

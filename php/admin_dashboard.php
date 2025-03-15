@@ -12,17 +12,18 @@ if (!isset($_SESSION['username'])) {
 // کوئری برای دریافت اطلاعات هر جدول
 $health_test_sql = "SELECT * FROM dental_health_responses"; // جدول مربوط به آزمون سلامت دندان
 $consultation_sql = "SELECT * FROM consultation_requests_moshavereh"; // جدول مربوط به مشاوره آنلاین
-$appointment_sql = "SELECT * FROM consultation_requests"; // جدول مربوط به نوبت‌دهی
+$doctors = "SELECT * FROM dbo_add_doctors"; // جدول مربوط به نوبت‌دهی
 $slider_settings = 'SELECT * FROM site_settings ORDER BY priority ASC';
 $comments_sql='select * from dbo_user_comments';
+$nobat='select * from dbo_schedule_nobat order by day_of_week';
 
 
 $health_test_result = mysqli_query($conn, $health_test_sql);
 $consultation_result = mysqli_query($conn, $consultation_sql);
-$appointment_result = mysqli_query($conn, $appointment_sql);
+$doctors_result = mysqli_query($conn, $doctors);
 $slider_settings_result=mysqli_query($conn,$slider_settings);
 $comments_result=mysqli_query($conn,$comments_sql);
-
+$nobat_result=mysqli_query($conn,$nobat);
 
 $sql = "SELECT * FROM site_settings LIMIT 1";
 $result = mysqli_query($conn , $sql);
@@ -151,20 +152,20 @@ exit();
         <h1>سلام، <?php echo $_SESSION['username']; ?> خوش آمدید</h1>
     </header>
     <section>
+        <div class="table-container">
+            <?php
+            if (isset($_SESSION['message'])):
+                ?>
+                <p style="color: red"><?php
+                    echo $_SESSION['message'];
+                    unset($_SESSION['message']);
+                    ?></p>
+            <?php
+            endif; ?>
+        </div>
     <div class="table-container">
-
-        <?php
-        if (isset($_SESSION['message'])):
-        ?>
-        <p style="color: red"><?php
-            echo $_SESSION['message'];
-            unset($_SESSION['message']);
-            ?></p>
-        <?php
-        endif; ?>
-
         <?php if (isset($message)) echo "<p>$message</p>"; ?>
-        <h3>تغییرات مربوط به استایل دهی</h3>
+        <h3>تغییرات مربوط به بنر سایت</h3>
         <form method="post"  enctype="multipart/form-data">
         <label>عنوان:</label>
         <input type="text" name="home_title">
@@ -216,8 +217,6 @@ exit();
                                      }
                                    ?>
                         </td>
-
-
                     </tr>
                 <?php } ?>
             </table>
@@ -321,23 +320,162 @@ exit();
             <table>
                 <thead>
                     <tr>
-                        <th>شناسه</th>
                         <th>نام</th>
                         <th>شماره تماس</th>
                         <th>تاریخ نوبت</th>
-                        
                     </tr>
                 </thead>
                 <tbody>
-                    <?php while ($row = mysqli_fetch_assoc($appointment_result)) { ?>
-                        <tr>
-                            <td><?php echo $row['id']; ?></td>
-                            <td><?php echo $row['full_name']; ?></td>
-                            <td><?php echo $row['phone']; ?></td>
-                            <td><?php echo $row['appointment_time']; ?></td>
-                            
-                        </tr>
-                    <?php } ?>
+<!--                    --><?php //while ($row = mysqli_fetch_assoc($appointment_result)) { ?>
+<!--                        <tr>-->
+<!--                            <td>--><?php //echo $row['full_name']; ?><!--</td>-->
+<!--                            <td>--><?php //echo $row['phone']; ?><!--</td>-->
+<!--                            <td>--><?php //echo $row['appointment_time']; ?><!--</td>-->
+<!--                        </tr>-->
+<!--                    --><?php //} ?>
+                </tbody>
+            </table>
+        </div>
+        <div class="table-container">
+            <h3>نوبت کاری پزشکان </h3>
+            <form method="post" action="doctor_schedule.php" enctype="multipart/form-data">
+                <label>نام پزشک:</label>
+                <select name="doctor_id">
+                    <?php
+                    include ('config.php');
+                    $sql='select * from dbo_add_doctors';
+                    $result=$conn->query($sql);
+                    while ($row = $result->fetch_assoc()) {
+                        echo "<option value='{$row['id']}'>{$row['name']} - {$row['takhasos']}</option>";
+                    }
+                    ?>
+                </select>
+                <label>انتخاب بازه زمانی:</label>
+                <select name="schedule_id">
+                    <?php
+                    include ('config.php');
+                    $sql='select * from dbo_schedule_nobat ';
+                    $result=$conn->query($sql);
+                    while ($row = $result->fetch_assoc()) {
+                        echo "<option value='{$row['id']}'>{$row['day_of_week']} - {$row['time_slot']}</option>";
+                    }
+                    ?>
+                </select>
+                <input type="submit" name="submit" value="  ثبت " class="submit-btn">
+            </form>
+
+
+            <table>
+                <thead>
+                <tr>
+                    <th>نام پزشک</th>
+                    <th>تخصص</th>
+                    <th>روز</th>
+                    <th>ساعت</th>
+                    <th>عملیات</th>
+                </tr>
+                </thead>
+                <tbody>
+                <?php
+                // دریافت اطلاعات نوبت‌ها همراه با اطلاعات پزشک
+                $sql = "SELECT ds.id as doctor_schedule_id, d.id as doctor_id, d.name, d.takhasos, s.id as schedule_id, s.day_of_week, s.time_slot 
+                FROM doctor_schedule ds
+                JOIN dbo_add_doctors d ON ds.doctor_id = d.id
+                JOIN dbo_schedule_nobat s ON ds.schedule_id = s.id";
+
+                $result = $conn->query($sql);
+
+
+
+                while ($row = $result->fetch_assoc()) { ?>
+                    <tr>
+                        <td><?php echo $row['name']; ?></td>
+                        <td><?php echo $row['takhasos']; ?></td>
+                        <td><?php echo $row['day_of_week']; ?></td>
+                        <td><?php echo $row['time_slot']; ?></td>
+                        <td><a href="delete_doctor_schedule.php?id=<?= $row['doctor_schedule_id'] ?>" onclick="return confirm('آیا مطمئن هستید؟')">حذف</a></td>                    </tr>
+                <?php } ?>
+                </tbody>
+            </table>
+        </div>
+
+
+
+
+
+
+        <div class="table-container">
+            <h3>مشخصات دکتر</h3>
+            <form method="post" action="doctors.php" enctype="multipart/form-data">
+                <label>:نام</label>
+                <input type="text" name="d-name">
+
+                <label>تخصص:</label>
+                <input type="text" name="d-takhasos" >
+
+                <label>شماره همراه:</label>
+                <input type="number" name="d-phone">
+                <br><br>
+                <input type="submit" name="submit" value="  ثبت " class="submit-btn">
+            </form>
+            <table>
+                <thead>
+                <tr>
+                    <th>نام</th>
+                    <th>تخصص</th>
+                    <th>شماره تماس</th>
+                    <th>عملیات</th>
+                </tr>
+                </thead>
+                <tbody>
+                <?php while ($row = mysqli_fetch_assoc($doctors_result)) { ?>
+                    <tr>
+                        <td><?php echo $row['name']; ?></td>
+                        <td><?php echo $row['takhasos']; ?></td>
+                        <td><?php echo $row['phone']; ?></td>
+                        <td><a href="delete_docs.php?id=<?= $row["id"] ?> "methods="get" onclick="return confirm('ایا مطمین هستید')" >حذف     </a></td>
+                    </tr>
+                <?php } ?>
+                </tbody>
+            </table>
+        </div>
+
+
+
+
+        <div class="table-container">
+            <h3>نوبت کاری </h3>
+            <form method="post" action="nobats.php" enctype="multipart/form-data">
+                <label>روز:</label>
+                <select name="day">
+                    <option value="شنبه">شنبه</option>
+                    <option value="یکشنبه">یکشنبه</option>
+                    <option value="دوشنبه">دوشنبه</option>
+                    <option value="سه‌شنبه">سه‌شنبه</option>
+                    <option value="چهارشنبه">چهارشنبه</option>
+                    <option value="پنجشنبه">پنجشنبه</option>
+                    <option value="جمعه">جمعه</option>
+                </select>
+                <label>ساعت:</label>
+                <input type="text" name="time">
+                <input type="submit" name="submit" value="  ثبت " class="submit-btn">
+            </form>
+            <table>
+                <thead>
+                <tr>
+                    <th>روز</th>
+                    <th>ساعت</th>
+                    <th>عملیات</th>
+                </tr>
+                </thead>
+                <tbody>
+                <?php while ($row = mysqli_fetch_assoc($nobat_result)) { ?>
+                    <tr>
+                        <td><?php echo $row['day_of_week']; ?></td>
+                        <td><?php echo $row['time_slot']; ?></td>
+                        <td><a href="delete_schedule.php?id=<?= $row["id"] ?> "methods="get" onclick="return confirm('ایا مطمین هستید')" >حذف     </a></td>
+                    </tr>
+                <?php } ?>
                 </tbody>
             </table>
         </div>
