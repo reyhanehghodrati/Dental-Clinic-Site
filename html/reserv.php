@@ -1,3 +1,10 @@
+<?php
+session_start();
+$_SESSION["token"]=bin2hex(random_bytes(32));
+//expration token:
+$_SESSION["token-expire"]=time()+3600;
+?>
+
 <!DOCTYPE html>
 <html lang="fa">
 <head>
@@ -43,6 +50,7 @@
     <div id="timeContainer">ابتدا پزشک را انتخاب کنید</div>
     <input type="hidden" name="nobat" id="selectedNobat" required>
 
+      <input type="hidden" name="token" value="<?= $_SESSION["token"]?>"/>
     <button type="submit">ثبت نوبت</button>
   </form>
   <div id="responseMessage" style="margin-top: 20px;"></div>

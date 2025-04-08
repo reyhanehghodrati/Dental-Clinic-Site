@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 08, 2025 at 04:31 AM
+-- Generation Time: Apr 08, 2025 at 01:49 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -32,23 +32,11 @@ CREATE TABLE `consultation_requests` (
   `full_name` varchar(255) NOT NULL,
   `email` varchar(255) NOT NULL,
   `phone` varchar(20) NOT NULL,
-  `nobat` varchar(255) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `doctor_id` int(11) NOT NULL
+  `doctor_id` int(11) NOT NULL,
+  `time_id` int(11) DEFAULT NULL,
+  `data_miladi` varchar(20) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `consultation_requests`
---
-
-INSERT INTO `consultation_requests` (`id`, `full_name`, `email`, `phone`, `nobat`, `created_at`, `doctor_id`) VALUES
-(6, 'ریحانه قدرتی', 'reyhan@gmail.com', '09109253995', '۲۰ فروردین ۱۴۰۴ | دوشنبه - 9-12', '2025-04-07 20:13:16', 0),
-(7, 'ریحانه قدرتی', 'reyhan@gmail.com', '09109253995', '۲۰ فروردین ۱۴۰۴ | دوشنبه - 9-12', '2025-04-07 20:19:52', 0),
-(8, 'ریحانه قدرتی', 'reyhan@gmail.com', '09109253995', '۲۰ فروردین ۱۴۰۴ | دوشنبه - 9-12', '2025-04-07 20:21:09', 0),
-(9, 'ریحانه قدرتی', 'reyhan@gmail.com', '09109253995', '۲۰ فروردین ۱۴۰۴ | دوشنبه - 9-12', '2025-04-07 20:55:01', 152),
-(10, 'ریحانه قدرتی', 'reyhan@gmail.com', '09109253995', '۲۰ فروردین ۱۴۰۴ | دوشنبه - 9-12', '2025-04-07 21:04:05', 152),
-(11, 'ریحانه قدرتی', 'reyhan@gmail.com', '09109253995', '۲۲ فروردین ۱۴۰۴ | چهارشنبه - 9-12', '2025-04-07 21:07:13', 152),
-(12, 'ریحانه قدرتی', 'reyhan@gmail.com', '09109253995', '۲۲ فروردین ۱۴۰۴ | چهارشنبه - 9-12', '2025-04-07 21:10:12', 152);
 
 -- --------------------------------------------------------
 
@@ -85,7 +73,8 @@ CREATE TABLE `dbo_add_doctors` (
 
 INSERT INTO `dbo_add_doctors` (`id`, `name`, `takhasos`, `phone`, `created_at`) VALUES
 (152, 'غلامی', 'جراح', '09109253995', '2025-03-15 10:28:16'),
-(154, 'قدرتی', 'دندان ', '0965142856', '2025-03-15 11:38:14');
+(154, 'قدرتی', 'دندان ', '0965142856', '2025-03-15 11:38:14'),
+(155, 'صمدی', 'جراح', '09165485454', '2025-04-08 06:07:02');
 
 -- --------------------------------------------------------
 
@@ -122,7 +111,8 @@ INSERT INTO `dbo_schedule_nobat` (`id`, `day_of_week`, `time_slot`) VALUES
 (1, 'دوشنبه', '9-12'),
 (2, 'دوشنبه', '14-16'),
 (3, 'یکشنبه', '14-16'),
-(5, 'چهارشنبه', '9-12');
+(5, 'چهارشنبه', '9-12'),
+(6, 'سه‌شنبه', '14-16');
 
 -- --------------------------------------------------------
 
@@ -188,7 +178,8 @@ CREATE TABLE `doctor_schedule` (
 INSERT INTO `doctor_schedule` (`id`, `doctor_id`, `schedule_id`, `max_capacity`) VALUES
 (6, 152, 1, 4),
 (7, 154, 2, 5),
-(8, 152, 5, 4);
+(8, 152, 5, 4),
+(9, 155, 6, 5);
 
 -- --------------------------------------------------------
 
@@ -311,7 +302,7 @@ ALTER TABLE `wh_users`
 -- AUTO_INCREMENT for table `consultation_requests`
 --
 ALTER TABLE `consultation_requests`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
 
 --
 -- AUTO_INCREMENT for table `consultation_requests_moshavereh`
@@ -323,7 +314,7 @@ ALTER TABLE `consultation_requests_moshavereh`
 -- AUTO_INCREMENT for table `dbo_add_doctors`
 --
 ALTER TABLE `dbo_add_doctors`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=155;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=156;
 
 --
 -- AUTO_INCREMENT for table `dbo_patient`
@@ -335,7 +326,7 @@ ALTER TABLE `dbo_patient`
 -- AUTO_INCREMENT for table `dbo_schedule_nobat`
 --
 ALTER TABLE `dbo_schedule_nobat`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `dbo_user_comments`
@@ -353,7 +344,7 @@ ALTER TABLE `dental_health_responses`
 -- AUTO_INCREMENT for table `doctor_schedule`
 --
 ALTER TABLE `doctor_schedule`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `site_settings`
