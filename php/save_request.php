@@ -20,7 +20,17 @@ if($_POST["token"]==$_SESSION["token"]) {
         $phone = isset($_POST['phone']) ? mysqli_real_escape_string($conn, $_POST['phone']) : '';
         $doctor_id = isset($_POST['doctor_id']) ? intval($_POST['doctor_id']) : 0;
         $nobat = isset($_POST['nobat']) ? mysqli_real_escape_string($conn, $_POST['nobat']) : '';
-
+//
+//        $stm_doctor_id=$conn->prepare("select count(*) from dbo_add_doctors where id=?");
+//        $stm_doctor_id->execute([$doctor_id]);
+//        $doc_exist=$stm_doctor_id->fetchcolumn();
+//        if(!$doc_exist){
+//            echo json_encode([
+//                'status'=>'error',
+//                'message'=>'دکتری با این آیدی یافت نشد'
+//            ]);
+//            exit();
+//        }
         // بررسی داده‌ها
         if (empty($full_name) || empty($email) || empty($phone) || empty($doctor_id) || empty($nobat)) {
             $response['status'] = 'error';
@@ -41,7 +51,7 @@ if($_POST["token"]==$_SESSION["token"]) {
             $row_check = mysqli_fetch_assoc($result_check_capacity);
             $max_capacity = $row_check['max_capacity'];
             $reserved = $row_check['reserved'];
-            list($day_of_week, $time_slot) = explode(" - ", $nobat);
+            //list($day_of_week, $time_slot) = explode(" - ", $nobat);
 
             if ($reserved >= $max_capacity) {
                 $response['status'] = 'error';

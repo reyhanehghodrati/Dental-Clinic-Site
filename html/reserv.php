@@ -50,6 +50,7 @@ $_SESSION["token-expire"]=time()+3600;
     <div id="timeContainer">ابتدا پزشک را انتخاب کنید</div>
     <input type="hidden" name="nobat" id="selectedNobat" required>
 
+
       <input type="hidden" name="token" value="<?= $_SESSION["token"]?>"/>
     <button type="submit">ثبت نوبت</button>
   </form>
