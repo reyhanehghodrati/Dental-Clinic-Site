@@ -1,50 +1,82 @@
 <?php
-session_start();
-include ('config.php');
+// اتصال به پایگاه داده
+require_once 'config.php';
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $full_name = $conn->real_escape_string($_POST['full_name']);
-    $email = $conn->real_escape_string($_POST['email']);
-    $phone = $conn->real_escape_string($_POST['phone']);
-    $doctor_schedule_id = $conn->real_escape_string($_POST['doctor_schedule_id']);
+$response = [];
 
-    $sql = "INSERT INTO appointments (patient_name, patient_email, phone, doctor_schedule_id) 
-            VALUES ('$full_name', '$email', '$phone', '$doctor_schedule_id')";
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // دریافت داده‌ها از فرم
+    $full_name = isset($_POST['full_name']) ? mysqli_real_escape_string($conn, $_POST['full_name']) : '';
+    $email = isset($_POST['email']) ? mysqli_real_escape_string($conn, $_POST['email']) : '';
+    $phone = isset($_POST['phone']) ? mysqli_real_escape_string($conn, $_POST['phone']) : '';
+    $doctor_id = isset($_POST['doctor_id']) ? intval($_POST['doctor_id']) : 0;
+    $nobat = isset($_POST['nobat']) ? mysqli_real_escape_string($conn, $_POST['nobat']) : '';
 
-    if ($conn->query($sql) === TRUE) {
-        echo "نوبت شما با موفقیت ثبت شد!";
+    // بررسی داده‌ها
+    if (empty($full_name) || empty($email) || empty($phone) || empty($doctor_id) || empty($nobat)) {
+        $response['status'] = 'error';
+        $response['message'] = 'تمام فیلدها باید پر شوند.';
     } else {
-        echo "خطا در ثبت نوبت: " . $conn->error;
-    }
-}
+        // تقسیم کردن nobat به روز و ساعت
+        list($day_of_week, $time_slot) = explode(' - ', $nobat);
 
-$conn->close();
-?>
+        // بررسی ظرفیت نوبت
+        $query_check_capacity = "
+            SELECT ds.max_capacity, COUNT(cr.id) AS reserved
+            FROM doctor_schedule ds
+            LEFT JOIN consultation_requests cr ON cr.doctor_id = ds.doctor_id AND cr.nobat = '$nobat'
+            WHERE ds.doctor_id = $doctor_id
+            GROUP BY ds.max_capacity
+        ";
+        $result_check_capacity = mysqli_query($conn, $query_check_capacity);
+        $row_check = mysqli_fetch_assoc($result_check_capacity);
 
+        $max_capacity = $row_check['max_capacity'];
+        $reserved = $row_check['reserved'];
+            
+        if ($reserved >= $max_capacity) {
+            $response['status'] = 'error';
+            $response['message'] = 'ظرفیت این نوبت تکمیل شده است.';
+        } else {
+            // ذخیره‌سازی در پایگاه داده
+            $query = "
+                INSERT INTO consultation_requests (doctor_id, full_name, email, phone, nobat)
+                VALUES ('$doctor_id', '$full_name', '$email', '$phone', '$nobat')
+            ";
 
-<?php
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "clinic_db";
+            if (mysqli_query($conn, $query)) {
+                // کاهش ظرفیت نوبت در جدول doctor_schedule
+                // استخراج روز و ساعت از متغیر nobat
+                list($day_of_week, $time_slot) = explode(" - ", $nobat);
 
-$conn = new mysqli($servername, $username, $password, $dbname);
-$conn->set_charset("utf8");
+                // جستجو برای ساعت و روز
+                $query_update_capacity = "
+                    UPDATE doctor_schedule ds
+                    JOIN dbo_schedule_nobat sn ON sn.day_of_week = '$day_of_week' AND sn.time_slot = '$time_slot'
+                    SET ds.max_capacity = ds.max_capacity - 1
+                    WHERE ds.doctor_id = $doctor_id AND sn.id = ds.schedule_id
+                ";
 
-if ($conn->connect_error) {
-    die("اتصال ناموفق: " . $conn->connect_error);
-}
+                // اجرای Query
+                $result_update_capacity = mysqli_query($conn, $query_update_capacity);
 
-$sql = "SELECT id, full_name FROM doctors";
-$result = $conn->query($sql);
-
-if ($result->num_rows > 0) {
-    while ($row = $result->fetch_assoc()) {
-        echo "<option value='{$row['id']}'>{$row['full_name']}</option>";
+                if ($result_update_capacity) {
+                    $response['status'] = 'success';
+                    $response['message'] = 'رزرو نوبت با موفقیت ثبت شد .';
+                } else {
+                    $response['status'] = 'error';
+                    $response['message'] = 'خطا در کاهش ظرفیت.';
+                }
+            } else {
+                $response['status'] = 'error';
+                $response['message'] = 'خطا در ثبت رزرو.';
+            }
+        }
     }
 } else {
-    echo "<option value=''>پزشکی یافت نشد</option>";
+    $response['status'] = 'error';
+    $response['message'] = 'داده‌های ارسال‌شده صحیح نیستند.';
 }
 
-$conn->close();
+echo json_encode($response, JSON_UNESCAPED_UNICODE);
 ?>

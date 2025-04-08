@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 15, 2025 at 12:52 PM
+-- Generation Time: Apr 08, 2025 at 04:31 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -32,20 +32,23 @@ CREATE TABLE `consultation_requests` (
   `full_name` varchar(255) NOT NULL,
   `email` varchar(255) NOT NULL,
   `phone` varchar(20) NOT NULL,
-  `docter` varchar(255) NOT NULL,
   `nobat` varchar(255) NOT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `doctor_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `consultation_requests`
 --
 
-INSERT INTO `consultation_requests` (`id`, `full_name`, `email`, `phone`, `docter`, `nobat`, `created_at`) VALUES
-(2, 'ریحانه قدرتی نسب', 'reyhanghodrati@gmail.com', '02156323544', 'dr-ahmadi', 'شنبه 25 اسفند - 14-16', '2025-03-12 10:40:08'),
-(3, 'ریحانه قدرتی نسب', 'reyhanghodrati@gmail.com', '02156323544', 'dr-ahmadi', 'شنبه 25 اسفند - 14-16', '2025-03-12 11:00:15'),
-(4, 'ریحانه قدرتی نسب', 'reyhanghodrati@gmail.com', '09109253995', 'dr-mohammadi', 'شنبه 25 اسفند - 14-16', '2025-03-12 11:35:54'),
-(5, 'ریحانه قدرتی نسب', 'reyhanghodrati@gmail.com', '09109253995', 'dr-ahmadi', 'شنبه 25 اسفند - 14-16', '2025-03-12 11:36:01');
+INSERT INTO `consultation_requests` (`id`, `full_name`, `email`, `phone`, `nobat`, `created_at`, `doctor_id`) VALUES
+(6, 'ریحانه قدرتی', 'reyhan@gmail.com', '09109253995', '۲۰ فروردین ۱۴۰۴ | دوشنبه - 9-12', '2025-04-07 20:13:16', 0),
+(7, 'ریحانه قدرتی', 'reyhan@gmail.com', '09109253995', '۲۰ فروردین ۱۴۰۴ | دوشنبه - 9-12', '2025-04-07 20:19:52', 0),
+(8, 'ریحانه قدرتی', 'reyhan@gmail.com', '09109253995', '۲۰ فروردین ۱۴۰۴ | دوشنبه - 9-12', '2025-04-07 20:21:09', 0),
+(9, 'ریحانه قدرتی', 'reyhan@gmail.com', '09109253995', '۲۰ فروردین ۱۴۰۴ | دوشنبه - 9-12', '2025-04-07 20:55:01', 152),
+(10, 'ریحانه قدرتی', 'reyhan@gmail.com', '09109253995', '۲۰ فروردین ۱۴۰۴ | دوشنبه - 9-12', '2025-04-07 21:04:05', 152),
+(11, 'ریحانه قدرتی', 'reyhan@gmail.com', '09109253995', '۲۲ فروردین ۱۴۰۴ | چهارشنبه - 9-12', '2025-04-07 21:07:13', 152),
+(12, 'ریحانه قدرتی', 'reyhan@gmail.com', '09109253995', '۲۲ فروردین ۱۴۰۴ | چهارشنبه - 9-12', '2025-04-07 21:10:12', 152);
 
 -- --------------------------------------------------------
 
@@ -118,7 +121,8 @@ CREATE TABLE `dbo_schedule_nobat` (
 INSERT INTO `dbo_schedule_nobat` (`id`, `day_of_week`, `time_slot`) VALUES
 (1, 'دوشنبه', '9-12'),
 (2, 'دوشنبه', '14-16'),
-(3, 'یکشنبه', '14-16');
+(3, 'یکشنبه', '14-16'),
+(5, 'چهارشنبه', '9-12');
 
 -- --------------------------------------------------------
 
@@ -182,8 +186,9 @@ CREATE TABLE `doctor_schedule` (
 --
 
 INSERT INTO `doctor_schedule` (`id`, `doctor_id`, `schedule_id`, `max_capacity`) VALUES
-(6, 152, 1, 5),
-(7, 154, 2, 5);
+(6, 152, 1, 4),
+(7, 154, 2, 5),
+(8, 152, 5, 4);
 
 -- --------------------------------------------------------
 
@@ -306,7 +311,7 @@ ALTER TABLE `wh_users`
 -- AUTO_INCREMENT for table `consultation_requests`
 --
 ALTER TABLE `consultation_requests`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT for table `consultation_requests_moshavereh`
@@ -330,7 +335,7 @@ ALTER TABLE `dbo_patient`
 -- AUTO_INCREMENT for table `dbo_schedule_nobat`
 --
 ALTER TABLE `dbo_schedule_nobat`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `dbo_user_comments`
@@ -348,7 +353,7 @@ ALTER TABLE `dental_health_responses`
 -- AUTO_INCREMENT for table `doctor_schedule`
 --
 ALTER TABLE `doctor_schedule`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `site_settings`

@@ -67,7 +67,7 @@
     <header class="header">
         <nav class="navbar" id="menu">
             <button class="nav-logo nav-button">
-                <a href="../html/reserv.html" class="nav-logo">نوبت دهی</a>
+                <a href="../html/reserv.php" class="nav-logo">نوبت دهی</a>
             </button>
     
             <ul class="nav-menu">
