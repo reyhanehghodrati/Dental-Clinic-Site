@@ -56,7 +56,7 @@ while ($row = mysqli_fetch_assoc($result)) {
     $checkQuery = "
     SELECT COUNT(*) AS count
     FROM consultation_requests
-    WHERE time_id = '$day - $time ' and  tarikh ='$jdate'
+    WHERE time_id = '$day $time ' and  tarikh ='$jdate'
   ";
     $checkResult = mysqli_query($conn, $checkQuery);
     $countRow = mysqli_fetch_assoc($checkResult);
