@@ -42,7 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $query_check_capacity = "
         SELECT ds.max_capacity, COUNT(cr.id) AS reserved
         FROM doctor_schedule ds
-        LEFT JOIN consultation_requests cr ON cr.doctor_id = ds.doctor_id AND cr.nobat = '$nobat'
+        LEFT JOIN consultation_requests cr ON cr.doctor_id = ds.doctor_id AND cr.time_id = '$time_id' AND cr.tarikh='$date_shamsi'
         WHERE ds.doctor_id = $doctor_id
         GROUP BY ds.max_capacity
     ";
