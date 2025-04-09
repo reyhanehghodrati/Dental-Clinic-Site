@@ -28,14 +28,14 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `consultation_requests` (
-  `id` int(11) NOT NULL,
-  `full_name` varchar(255) NOT NULL,
-  `email` varchar(255) NOT NULL,
-  `phone` varchar(20) NOT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `doctor_id` int(11) NOT NULL,
-  `time_id` int(11) DEFAULT NULL,
-  `data_miladi` varchar(20) DEFAULT NULL
+    `id` int(11) NOT NULL,
+    `full_name` varchar(255) NOT NULL,
+    `email` varchar(255) NOT NULL,
+    `phone` varchar(20) NOT NULL,
+    `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+    `doctor_id` int(11) NOT NULL,
+    `time_id` varchar(20) DEFAULT NULL,
+    `tarikh` varchar(20) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
