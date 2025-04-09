@@ -3,6 +3,7 @@
 require_once 'config.php';
 session_start();
 $response = [];
+
 if(!isset($_POST["token"]) || !isset($_SESSION["token"])){
     exit("token not set");
 }
@@ -20,24 +21,32 @@ if($_POST["token"]==$_SESSION["token"]) {
         $phone = isset($_POST['phone']) ? mysqli_real_escape_string($conn, $_POST['phone']) : '';
         $doctor_id = isset($_POST['doctor_id']) ? intval($_POST['doctor_id']) : 0;
         $nobat = isset($_POST['nobat']) ? mysqli_real_escape_string($conn, $_POST['nobat']) : '';
+
+
+        list($day_of_week, $time_slot,$date_shamsi) = explode(" - ", $nobat);
+        $time_id=$day_of_week+$time_slot;
+
+
+
+
+
+
 //
-//        $stm_doctor_id=$conn->prepare("select count(*) from dbo_add_doctors where id=?");
-//        $stm_doctor_id->execute([$doctor_id]);
-//        $doc_exist=$stm_doctor_id->fetchcolumn();
-//        if(!$doc_exist){
-//            echo json_encode([
-//                'status'=>'error',
-//                'message'=>'دکتری با این آیدی یافت نشد'
-//            ]);
-//            exit();
-//        }
+//
+//                $stm_doctor_id=$conn->prepare("select count(*) from dbo_add_doctors where id=?");
+//                $stm_doctor_id->execute($doctor_id);
+//                $doc_exist=$stm_doctor_id->fetchcolumn();
+//                if(!$doc_exist){
+//                    echo json_encode([
+//                        'status'=>'error',
+//                        'message'=>'دکتری با این آیدی یافت نشد']);
+//                    exit();
+//                }
         // بررسی داده‌ها
         if (empty($full_name) || empty($email) || empty($phone) || empty($doctor_id) || empty($nobat)) {
             $response['status'] = 'error';
             $response['message'] = 'تمام فیلدها باید پر شوند.';
         } else {
-            // تقسیم کردن nobat به روز و ساعت
-            list($day_of_week, $time_slot) = explode(' - ', $nobat);
 
             // بررسی ظرفیت نوبت
             $query_check_capacity = "
@@ -51,8 +60,6 @@ if($_POST["token"]==$_SESSION["token"]) {
             $row_check = mysqli_fetch_assoc($result_check_capacity);
             $max_capacity = $row_check['max_capacity'];
             $reserved = $row_check['reserved'];
-            //list($day_of_week, $time_slot) = explode(" - ", $nobat);
-
             if ($reserved >= $max_capacity) {
                 $response['status'] = 'error';
                 $response['message'] = 'ظرفیت این نوبت تکمیل شده است.';
@@ -60,10 +67,9 @@ if($_POST["token"]==$_SESSION["token"]) {
 
                 // ذخیره‌سازی در پایگاه داده
                 $query = "
-                INSERT INTO consultation_requests (doctor_id, full_name, email, phone, time_id,data_miladi)
-                VALUES ('$doctor_id', '$full_name', '$email', '$phone', '')
+                INSERT INTO consultation_requests (doctor_id, full_name, email, time_id, tarikh)
+                VALUES ('$doctor_id', '$full_name', '$email', '$phone', '$time_id','$date_shamsi')
             ";
-
                 if (mysqli_query($conn, $query)) {
                     // کاهش ظرفیت نوبت در جدول doctor_schedule
                     // استخراج روز و ساعت از متغیر nobat
