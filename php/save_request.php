@@ -34,53 +34,83 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
+// دریافت اطلاعات زمان نوبت
     list($date_shamsi_part, $day_time_part) = explode(" | ", $nobat);
     list($day_of_week, $time_slot) = explode(" - ", $day_time_part);
     $date_shamsi = trim($date_shamsi_part);
-    $time_id = $day_of_week . $time_slot;
 
+// گرفتن time_id از جدول زمانبندی
+    $query_time_to_id = "
+    SELECT id 
+    FROM dbo_schedule_nobat
+    WHERE day_of_week = '$day_of_week' AND time_slot = '$time_slot'
+";
+    $result_check_time = mysqli_query($conn, $query_time_to_id);
+    $row_check_time = mysqli_fetch_assoc($result_check_time);
+
+    if (!$row_check_time) {
+        echo json_encode([
+            'status' => 'error',
+            'message' => 'زمان انتخاب شده معتبر نیست.'
+        ], JSON_UNESCAPED_UNICODE);
+        exit;
+    }
+
+    $time_id = $row_check_time['id'];
+
+// بررسی ظرفیت
     $query_check_capacity = "
-        SELECT ds.max_capacity, COUNT(cr.id) AS reserved
-        FROM doctor_schedule ds
-        LEFT JOIN consultation_requests cr ON cr.doctor_id = ds.doctor_id AND cr.time_id = '$time_id' AND cr.tarikh='$date_shamsi'
-        WHERE ds.doctor_id = $doctor_id
-        GROUP BY ds.max_capacity
-    ";
-
+    SELECT ds.max_capacity, COUNT(cr.id) AS reserved
+    FROM doctor_schedule ds
+    LEFT JOIN consultation_requests cr 
+        ON cr.doctor_id = ds.doctor_id 
+        AND cr.time_id = '$time_id' 
+        AND cr.tarikh = '$date_shamsi'
+    WHERE ds.doctor_id = $doctor_id AND ds.schedule_id = '$time_id'
+    GROUP BY ds.max_capacity
+";
     $result_check_capacity = mysqli_query($conn, $query_check_capacity);
     $row_check = mysqli_fetch_assoc($result_check_capacity);
 
     if (!$row_check || $row_check['reserved'] >= $row_check['max_capacity']) {
-        $response['status'] = 'error';
-        $response['message'] = 'ظرفیت این نوبت تکمیل شده است.';
-        echo json_encode($response, JSON_UNESCAPED_UNICODE);
+        echo json_encode([
+            'status' => 'error',
+            'message' => 'ظرفیت این نوبت تکمیل شده است.'
+        ], JSON_UNESCAPED_UNICODE);
         exit;
     }
 
+// ثبت در پایگاه داده
     $query = "
-        INSERT INTO consultation_requests (doctor_id, full_name, email, phone, time_id, tarikh)
-        VALUES ('$doctor_id', '$full_name', '$email', '$phone', '$time_id','$date_shamsi')
-    ";
+    INSERT INTO consultation_requests (doctor_id, full_name, email, phone, time_id, tarikh)
+    VALUES ('$doctor_id', '$full_name', '$email', '$phone', '$time_id', '$date_shamsi')
+";
 
     if (mysqli_query($conn, $query)) {
         $query_update_capacity = "
-            UPDATE doctor_schedule ds
-            JOIN dbo_schedule_nobat sn ON ds.schedule_id = sn.id
-            SET ds.max_capacity = ds.max_capacity - 1
-            WHERE ds.doctor_id = $doctor_id AND sn.day_of_week = '$day_of_week' AND sn.time_slot = '$time_slot'
-        ";
+        UPDATE doctor_schedule ds
+        JOIN dbo_schedule_nobat sn ON ds.schedule_id = sn.id
+        SET ds.max_capacity = ds.max_capacity - 1
+        WHERE ds.doctor_id = $doctor_id AND sn.day_of_week = '$day_of_week' AND sn.time_slot = '$time_slot'
+    ";
         $result_update_capacity = mysqli_query($conn, $query_update_capacity);
 
         if ($result_update_capacity) {
-            $response['status'] = 'success';
-            $response['message'] = 'رزرو نوبت با موفقیت ثبت شد.';
+            echo json_encode([
+                'status' => 'success',
+                'message' => 'رزرو نوبت با موفقیت ثبت شد.'
+            ], JSON_UNESCAPED_UNICODE);
         } else {
-            $response['status'] = 'error';
-            $response['message'] = 'خطا در کاهش ظرفیت.';
+            echo json_encode([
+                'status' => 'error',
+                'message' => 'خطا در کاهش ظرفیت.'
+            ], JSON_UNESCAPED_UNICODE);
         }
     } else {
-        $response['status'] = 'error';
-        $response['message'] = 'خطا در ثبت رزرو.';
+        echo json_encode([
+            'status' => 'error',
+            'message' => 'خطا در ثبت رزرو.'
+        ], JSON_UNESCAPED_UNICODE);
     }
 
     echo json_encode($response, JSON_UNESCAPED_UNICODE);
