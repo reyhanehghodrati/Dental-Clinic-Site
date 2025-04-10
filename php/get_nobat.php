@@ -52,21 +52,57 @@ while ($row = mysqli_fetch_assoc($result)) {
     list($gy, $gm, $gd) = explode('-', $dateStr);
     $jdate = jdate("j F Y", mktime(0, 0, 0, $gm, $gd, $gy));
 
+
+    $query_time_to_id = "
+    SELECT id 
+    FROM dbo_schedule_nobat
+    WHERE day_of_week = '$day' AND time_slot = '$time'
+";
+    $result_check_time = mysqli_query($conn, $query_time_to_id);
+    $row_check_time = mysqli_fetch_assoc($result_check_time);
+
+    if (!$row_check_time) {
+        echo json_encode([
+            'status' => 'error',
+            'message' => 'زمان انتخاب شده معتبر نیست.'
+        ], JSON_UNESCAPED_UNICODE);
+        exit;
+    }
+    $time_id = $row_check_time['id'];
+
     // محاسبه ظرفیت باقی‌مانده
     $checkQuery = "
     SELECT COUNT(*) AS count
     FROM consultation_requests
-    WHERE time_id = '$day $time ' and  tarikh ='$jdate'
+    WHERE time_id = '$time_id' and  tarikh ='$dateStr'
   ";
+
     $checkResult = mysqli_query($conn, $checkQuery);
     $countRow = mysqli_fetch_assoc($checkResult);
     $taken = $countRow['count'];
-    $capacityLeft = 5 - $taken;
 
+
+
+//    --------------------
+    $checkQuery_ds="
+    select max_capacity
+    from doctor_schedule
+    where id='$time_id'
+    ";
+    error_log($checkQuery_ds);
+    $checkResult_id = mysqli_query($conn, $checkQuery_ds);
+    $countRow_id = mysqli_fetch_assoc($checkResult_id);
+    $max_capacity = $countRow_id['max_capacity'];
+    $capacityLeft =$max_capacity - $taken;
+
+
+    error_log($capacityLeft);
+//    --------------------
     $response[] = [
         'day_of_week' => $day,
         'time_slot' => $time,
         'date_shamsi' => $jdate,
+        'date-miladi'=>$dateStr,
         'capacity_left' => $capacityLeft
     ];
 }

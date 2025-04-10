@@ -1,6 +1,8 @@
 <?php
 
 require_once 'config.php';
+require_once'jdf.php';
+
 session_start();
 
 header('Content-Type: application/json');
@@ -38,7 +40,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     list($date_shamsi_part, $day_time_part) = explode(" | ", $nobat);
     list($day_of_week, $time_slot) = explode(" - ", $day_time_part);
     $date_shamsi = trim($date_shamsi_part);
-
+    list($gy, $gm, $gd) = explode('-', $date_shamsi);
+    $jdate = jdate("j F Y", mktime(0, 0, 0, $gm, $gd, $gy));
+// تبدیل تاریخ شمسی به میلادی
+    $miladi_date = jalali_to_gregorian($jdate);
+error_log($miladi_date);
 // گرفتن time_id از جدول زمانبندی
     $query_time_to_id = "
     SELECT id 
@@ -65,7 +71,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     LEFT JOIN consultation_requests cr 
         ON cr.doctor_id = ds.doctor_id 
         AND cr.time_id = '$time_id' 
-        AND cr.tarikh = '$date_shamsi'
+        AND cr.tarikh = '$miladi_date'
     WHERE ds.doctor_id = $doctor_id AND ds.schedule_id = '$time_id'
     GROUP BY ds.max_capacity
 ";
@@ -83,19 +89,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 // ثبت در پایگاه داده
     $query = "
     INSERT INTO consultation_requests (doctor_id, full_name, email, phone, time_id, tarikh)
-    VALUES ('$doctor_id', '$full_name', '$email', '$phone', '$time_id', '$date_shamsi')
+    VALUES ('$doctor_id', '$full_name', '$email', '$phone', '$time_id', '$miladi_date')
 ";
 
     if (mysqli_query($conn, $query)) {
-        $query_update_capacity = "
-        UPDATE doctor_schedule ds
-        JOIN dbo_schedule_nobat sn ON ds.schedule_id = sn.id
-        SET ds.max_capacity = ds.max_capacity - 1
-        WHERE ds.doctor_id = $doctor_id AND sn.day_of_week = '$day_of_week' AND sn.time_slot = '$time_slot'
-    ";
-        $result_update_capacity = mysqli_query($conn, $query_update_capacity);
 
-        if ($result_update_capacity) {
             echo json_encode([
                 'status' => 'success',
                 'message' => 'رزرو نوبت با موفقیت ثبت شد.'
@@ -105,8 +103,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'status' => 'error',
                 'message' => 'خطا در کاهش ظرفیت.'
             ], JSON_UNESCAPED_UNICODE);
-        }
-    } else {
+
+    }}else {
         echo json_encode([
             'status' => 'error',
             'message' => 'خطا در ثبت رزرو.'
@@ -115,9 +113,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     echo json_encode($response, JSON_UNESCAPED_UNICODE);
     exit;
-}
+
 
 $response['status'] = 'error';
 $response['message'] = 'درخواست نامعتبر.';
 echo json_encode($response, JSON_UNESCAPED_UNICODE);
 
+?>
