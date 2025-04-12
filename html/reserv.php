@@ -1,8 +1,8 @@
 <?php
 session_start();
-$_SESSION["token"]=bin2hex(random_bytes(32));
-//expration token:
-$_SESSION["token-expire"]=time()+3600;
+$_SESSION["token"] = bin2hex(random_bytes(32));
+// expiration token:
+$_SESSION["token-expire"] = time() + 3600;
 ?>
 
 <!DOCTYPE html>
@@ -22,7 +22,7 @@ $_SESSION["token-expire"]=time()+3600;
 </head>
 <body>
 <div class="container">
-    <h2 >فرم رزرو نوبت</h2>
+    <h2>فرم رزرو نوبت</h2>
     <form id="reservationForm" method="POST" action="../php/save_request.php">
         <label>نام و نام خانوادگی:</label>
         <input type="text" name="full_name" required>
@@ -48,9 +48,9 @@ $_SESSION["token-expire"]=time()+3600;
 
         <label>نوبت:</label>
         <div id="timeContainer">ابتدا پزشک را انتخاب کنید</div>
-        <input type="hidden" name="nobat" id="selectedNobat" required>
-
-        <input type="hidden" name="token" value="<?= $_SESSION["token"]?>"/>
+        <input type="hidden" name="token" value="<?= $_SESSION["token"] ?>"/>
+        <input type="hidden" name="time_id" id="timeIdInput">
+        <input type="hidden" name="tarikh" id="tarikhInput">
         <button type="submit">ثبت نوبت</button>
     </form>
     <div id="responseMessage" style="margin-top: 20px;"></div>
@@ -60,7 +60,6 @@ $_SESSION["token-expire"]=time()+3600;
     const doctorSelect = document.getElementById('doctorSelect');
     const weekSelect = document.getElementById('weekSelect');
     const timeContainer = document.getElementById('timeContainer');
-    const selectedNobat = document.getElementById('selectedNobat');
     const reservationForm = document.getElementById('reservationForm');
     const responseMessage = document.getElementById('responseMessage');
 
@@ -73,8 +72,9 @@ $_SESSION["token-expire"]=time()+3600;
             fetch(`../php/get_nobat.php?doctor_id=${doctorId}&week=${week}`)
                 .then(response => response.json())
                 .then(data => {
-                    timeContainer.innerHTML = '';
+                    console.log("داده‌های دریافت شده از سرور:", data);
 
+                    timeContainer.innerHTML = ''; // پاکسازی محتویات قبلی
                     data.forEach(item => {
                         const span = document.createElement('span');
                         span.classList.add('time-slot');
@@ -82,6 +82,9 @@ $_SESSION["token-expire"]=time()+3600;
                         span.setAttribute('data-day', item.day_of_week);
                         span.setAttribute('data-date', item.date_shamsi);
                         span.innerText = `${item.day_of_week} (${item.date_shamsi}) - ${item.time_slot}`;
+
+                        // افزودن data-time_id به span (برای ذخیره time_id در درون data attributes)
+                        span.setAttribute('data-time-id', item.time_id);
 
                         // بررسی ظرفیت و تغییر استایل نوبت پر
                         if (item.capacity_left <= 0) {
@@ -94,13 +97,17 @@ $_SESSION["token-expire"]=time()+3600;
                             span.addEventListener("click", function () {
                                 document.querySelectorAll(".time-slot").forEach(t => t.classList.remove("selected"));
                                 this.classList.add("selected");
-                                selectedNobat.value = `${item.date_shamsi} | ${item.day_of_week} - ${item.time_slot}`;
+
+                                // پر کردن input مخفی
+                                document.getElementById("timeIdInput").value = this.getAttribute('data-time-id');
+                                document.getElementById("tarikhInput").value = item.date_miladi; // تاریخ میلادی ذخیره می‌شود
                             });
                         }
 
                         timeContainer.appendChild(span);
                     });
-                });
+                })
+                .catch(error => console.log('خطا در بارگذاری نوبت‌ها:', error));
         }
     }
 
@@ -116,7 +123,6 @@ $_SESSION["token-expire"]=time()+3600;
         })
             .then(response => response.json())
             .then(data => {
-                // نمایش پیام در همان صفحه
                 responseMessage.innerHTML = `<div style="padding: 10px; background-color: ${data.status === 'success' ? '#d4edda' : '#f8d7da'}; color: ${data.status === 'success' ? '#155724' : '#721c24'}; border: 1px solid ${data.status === 'success' ? '#c3e6cb' : '#f5c6cb'}; border-radius: 5px;">${data.message}</div>`;
 
                 if (data.status === 'success') {
@@ -130,11 +136,12 @@ $_SESSION["token-expire"]=time()+3600;
             });
     });
 
+    // افزودن EventListener برای تغییر پزشک و هفته
     doctorSelect.addEventListener('change', loadTimes);
     weekSelect.addEventListener('change', loadTimes);
+
+    // بارگذاری نوبت‌ها پس از لود شدن صفحه
     document.addEventListener('DOMContentLoaded', loadTimes);
-
-
 </script>
 </body>
 </html>

@@ -1,7 +1,7 @@
 <?php
 header('Content-Type: application/json');
-require_once 'config.php';  // اتصال به دیتابیس
-require_once 'jdf.php';     // برای تبدیل تاریخ میلادی به شمسی
+require_once 'config.php';
+require_once 'jdf.php';
 
 $doctor_id = isset($_GET['doctor_id']) ? intval($_GET['doctor_id']) : 0;
 $week_offset = isset($_GET['week']) ? intval($_GET['week']) : 0;
@@ -11,7 +11,6 @@ if (!$doctor_id) {
     exit;
 }
 
-// نگاشت روزهای هفته به شماره برای پیدا کردن تاریخ دقیق
 $daysMap = [
     'شنبه' => 0,
     'یکشنبه' => 1,
@@ -37,75 +36,59 @@ while ($row = mysqli_fetch_assoc($result)) {
     $time = $row['time_slot'];
     $schedule_id = $row['schedule_id'];
 
-    // محاسبه تاریخ میلادی دقیق آن روز
     $today = new DateTime();
-    $today->modify('this week +' . ($week_offset * 7) . ' days'); // محاسبه تاریخ دقیق هفته آینده
+    $today->modify('this week +' . ($week_offset * 7) . ' days');
     $weekdayNum = $daysMap[$day];
 
     $monday = clone $today;
     $monday->modify('monday this week');
     $exactDate = clone $monday;
     $exactDate->modify("+$weekdayNum days");
-    $dateStr = $exactDate->format('Y-m-d'); // تاریخ میلادی
+    $date_miladi = $exactDate->format('Y-m-d');
 
-    // تبدیل تاریخ به شمسی
-    list($gy, $gm, $gd) = explode('-', $dateStr);
+    // تبدیل به شمسی
+    list($gy, $gm, $gd) = explode('-', $date_miladi);
     $jdate = jdate("j F Y", mktime(0, 0, 0, $gm, $gd, $gy));
 
+    // گرفتن time_id برای این روز و ساعت
+    $query_time_id = "
+        SELECT id 
+        FROM dbo_schedule_nobat 
+        WHERE day_of_week = '$day' AND time_slot = '$time'
+    ";
+    $result_time_id = mysqli_query($conn, $query_time_id);
+    $row_time_id = mysqli_fetch_assoc($result_time_id);
 
-    $query_time_to_id = "
-    SELECT id 
-    FROM dbo_schedule_nobat
-    WHERE day_of_week = '$day' AND time_slot = '$time'
-";
-    $result_check_time = mysqli_query($conn, $query_time_to_id);
-    $row_check_time = mysqli_fetch_assoc($result_check_time);
+    if (!$row_time_id) continue;
 
-    if (!$row_check_time) {
-        echo json_encode([
-            'status' => 'error',
-            'message' => 'زمان انتخاب شده معتبر نیست.'
-        ], JSON_UNESCAPED_UNICODE);
-        exit;
-    }
-    $time_id = $row_check_time['id'];
+    $time_id = $row_time_id['id'];
 
     // محاسبه ظرفیت باقی‌مانده
-    $checkQuery = "
-    SELECT COUNT(*) AS count
-    FROM consultation_requests
-    WHERE time_id = '$time_id' and  tarikh ='$dateStr'
-  ";
-
-    $checkResult = mysqli_query($conn, $checkQuery);
-    $countRow = mysqli_fetch_assoc($checkResult);
-    $taken = $countRow['count'];
-
-
-
-//    --------------------
-    $checkQuery_ds="
-    select max_capacity
-    from doctor_schedule
-    where id='$time_id'
+    $query_capacity = "
+        SELECT ds.max_capacity, COUNT(cr.id) AS reserved
+        FROM doctor_schedule ds
+        LEFT JOIN consultation_requests cr
+            ON cr.doctor_id = ds.doctor_id
+            AND cr.time_id = '$time_id'
+            AND cr.tarikh = '$date_miladi'
+        WHERE ds.doctor_id = $doctor_id AND ds.schedule_id = '$time_id'
+        GROUP BY ds.max_capacity
     ";
-    error_log($checkQuery_ds);
-    $checkResult_id = mysqli_query($conn, $checkQuery_ds);
-    $countRow_id = mysqli_fetch_assoc($checkResult_id);
-    $max_capacity = $countRow_id['max_capacity'];
-    $capacityLeft =$max_capacity - $taken;
+    $result_capacity = mysqli_query($conn, $query_capacity);
+    $row_capacity = mysqli_fetch_assoc($result_capacity);
 
+    $max_capacity = $row_capacity['max_capacity'] ?? 0;
+    $reserved = $row_capacity['reserved'] ?? 0;
+    $capacityLeft = $max_capacity - $reserved;
 
-    error_log($capacityLeft);
-//    --------------------
     $response[] = [
         'day_of_week' => $day,
         'time_slot' => $time,
         'date_shamsi' => $jdate,
-        'date-miladi'=>$dateStr,
-        'capacity_left' => $capacityLeft
+        'date_miladi' => $date_miladi,
+        'capacity_left' => $capacityLeft,
+        'time_id' => $time_id
     ];
 }
 
 echo json_encode($response, JSON_UNESCAPED_UNICODE);
-?>
