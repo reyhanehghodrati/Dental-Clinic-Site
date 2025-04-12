@@ -2,11 +2,10 @@
 require_once 'config.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // چاپ داده‌های POST برای بررسی به فرمت JSON
-    echo json_encode(['post_data' => $_POST], JSON_UNESCAPED_UNICODE);
-    exit; // خروج برای جلوگیری از ادامه اجرا در این مرحله
 
-    // پس از اشکال زدایی می‌توانید این بخش را فعال کنید
+//    echo json_encode(['post_data' => $_POST], JSON_UNESCAPED_UNICODE);
+//    exit;
+
 
     $name = $_POST['full_name'] ?? '';
     $phone = $_POST['phone'] ?? '';
@@ -43,7 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // ذخیره درخواست مشاوره
     $stmt = $conn->prepare("
-        INSERT INTO consultation_requests (name, phone, doctor_id, time_id, tarikh) 
+        INSERT INTO consultation_requests (full_name, phone, doctor_id, time_id, tarikh) 
         VALUES (?, ?, ?, ?, ?)
     ");
     $stmt->bind_param("ssiis", $name, $phone, $doctor_id, $time_id, $tarikh);

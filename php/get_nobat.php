@@ -1,3 +1,4 @@
+
 <?php
 header('Content-Type: application/json');
 require_once 'config.php';
@@ -58,8 +59,6 @@ while ($row = mysqli_fetch_assoc($result)) {
     ";
     $result_time_id = mysqli_query($conn, $query_time_id);
     $row_time_id = mysqli_fetch_assoc($result_time_id);
-
-    if (!$row_time_id) continue;
 
     $time_id = $row_time_id['id'];
 
