@@ -16,7 +16,7 @@ $doctors = "SELECT * FROM dbo_add_doctors"; // جدول مربوط به نوبت
 $slider_settings = 'SELECT * FROM site_settings ORDER BY priority ASC';
 $comments_sql='select * from dbo_user_comments';
 $nobat='select * from dbo_schedule_nobat order by day_of_week';
-
+$time_reservation='SELECT * FROM `consultation_requests` ORDER BY `tarikh` , `doctor_id` ';
 
 $health_test_result = mysqli_query($conn, $health_test_sql);
 $consultation_result = mysqli_query($conn, $consultation_sql);
@@ -24,6 +24,7 @@ $doctors_result = mysqli_query($conn, $doctors);
 $slider_settings_result=mysqli_query($conn,$slider_settings);
 $comments_result=mysqli_query($conn,$comments_sql);
 $nobat_result=mysqli_query($conn,$nobat);
+$time_reservation_result=mysqli_query($conn,$time_reservation);
 
 $sql = "SELECT * FROM site_settings LIMIT 1";
 $result = mysqli_query($conn , $sql);
@@ -48,7 +49,15 @@ function miladi_to_shamsi($date) {
     
     return $shamsi_date;
 }
+function miladi_to_shamsii($date) {
+    // جدا کردن اجزای تاریخ میلادی
+    list($year, $month, $day) = explode('-', $date);
 
+    // تبدیل تاریخ و زمان به شمسی
+    $shamsi_date = jdate('Y/m/d ', mktime(0,0,0,(int)$month, (int)$day, (int)$year));
+
+    return $shamsi_date;
+}
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // ذخیره عنوان و زیرعنوان
@@ -322,17 +331,25 @@ exit();
                     <tr>
                         <th>نام</th>
                         <th>شماره تماس</th>
+                        <th>آیدی پزشک</th>
                         <th>تاریخ نوبت</th>
+                        <th>ساعت نوبت</th>
+                        <th>عملیات</th>
                     </tr>
                 </thead>
                 <tbody>
-<!--                    --><?php //while ($row = mysqli_fetch_assoc($appointment_result)) { ?>
-<!--                        <tr>-->
-<!--                            <td>--><?php //echo $row['full_name']; ?><!--</td>-->
-<!--                            <td>--><?php //echo $row['phone']; ?><!--</td>-->
-<!--                            <td>--><?php //echo $row['appointment_time']; ?><!--</td>-->
-<!--                        </tr>-->
-<!--                    --><?php //} ?>
+                    <?php while ($row = mysqli_fetch_assoc($time_reservation_result)) { ?>
+                        <tr>
+                            <td><?php echo $row['full_name']; ?></td>
+                            <td><?php echo $row['phone']; ?></td>
+                            <td><?php echo $row['doctor_id']; ?></td>
+                            <td><?php echo miladi_to_shamsii($row['tarikh']); ?></td>
+                            <td><?php echo $row['time_id']; ?></td>
+                            <td><a href="nobat_delete.php?id=<?= $row['id'] ?>" onclick="return confirm('آیا مطمئن هستید؟')">حذف</a>
+                                <p>------</p>
+                                <a href="nobat_update.php?id=<?= $row["id"] ?> "methods="get">ویرایش     </a></td>
+                        </tr>
+                    <?php } ?>
                 </tbody>
             </table>
         </div>
@@ -342,7 +359,6 @@ exit();
                 <label>نام پزشک:</label>
                 <select name="doctor_id">
                     <?php
-                    include ('config.php');
                     $sql='select * from dbo_add_doctors';
                     $result=$conn->query($sql);
                     while ($row = $result->fetch_assoc()) {
@@ -353,7 +369,7 @@ exit();
                 <label>انتخاب بازه زمانی:</label>
                 <select name="schedule_id">
                     <?php
-                    include ('config.php');
+
                     $sql='select * from dbo_schedule_nobat ';
                     $result=$conn->query($sql);
                     while ($row = $result->fetch_assoc()) {
@@ -361,6 +377,7 @@ exit();
                     }
                     ?>
                 </select>
+
                 <input type="submit" name="submit" value="  ثبت " class="submit-btn">
             </form>
 
