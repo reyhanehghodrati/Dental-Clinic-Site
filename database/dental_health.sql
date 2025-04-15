@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 08, 2025 at 01:49 PM
+-- Generation Time: Apr 15, 2025 at 02:12 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -28,15 +28,36 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `consultation_requests` (
-    `id` int(11) NOT NULL,
-    `full_name` varchar(255) NOT NULL,
-    `email` varchar(255) NOT NULL,
-    `phone` varchar(20) NOT NULL,
-    `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-    `doctor_id` int(11) NOT NULL,
-    `time_id` varchar(20) DEFAULT NULL,
-    `tarikh` varchar(20) DEFAULT NULL
+  `id` int(11) NOT NULL,
+  `full_name` varchar(255) NOT NULL,
+  `email` varchar(255) NOT NULL,
+  `phone` varchar(20) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `doctor_id` int(11) NOT NULL,
+  `time_id` varchar(20) DEFAULT NULL,
+  `tarikh` varchar(20) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `consultation_requests`
+--
+
+INSERT INTO `consultation_requests` (`id`, `full_name`, `email`, `phone`, `created_at`, `doctor_id`, `time_id`, `tarikh`) VALUES
+(63, 'قدرتی', '', '09165485454', '2025-04-12 07:56:21', 152, '1', '2025-04-09'),
+(66, 'قدرتی', '', '09125485454', '2025-04-12 08:34:54', 154, '2', '2025-04-09'),
+(67, 'قدرتی', 'reyhanghodrati@gmail.com', '09125485454', '2025-04-12 08:47:46', 152, '5', '2025-04-11'),
+(68, 'قدرتی', 'reyhanghodrati@gmail.com', '09125485454', '2025-04-12 11:11:01', 152, '5', '2025-04-11'),
+(69, 'قدرتی', 'reyhanghodrati@gmail.com', '09125485454', '2025-04-12 11:42:42', 152, '5', '2025-04-11'),
+(70, 'قدرتی', 'reyhanghodrati@gmail.com', '09165485454', '2025-04-12 12:10:24', 152, '5', '2025-04-18'),
+(71, 'قدرتی', 'reyhanghodrati@gmail.com', '09165485454', '2025-04-12 12:12:48', 152, '5', '2025-04-25'),
+(72, 'قدرتی', 'reyhanghodrati@gmail.com', '09165485454', '2025-04-12 12:29:48', 154, '2', '2025-04-23'),
+(73, 'قدرتی', 'reyhanghodrati@gmail.com', '09165485454', '2025-04-12 12:30:34', 155, '6', '2025-04-17'),
+(74, 'قدرتی', 'reyhanghodrati@gmail.com', '09165485454', '2025-04-15 07:21:45', 152, '1', '2025-04-16'),
+(75, 'قدرتی', 'reyhanghodrati@gmail.com', '09165485454', '2025-04-15 07:25:03', 152, '1', '2025-04-16'),
+(76, 'قدرتی', 'reyhanghodrati@gmail.com', '09165485454', '2025-04-15 07:25:30', 152, '5', '2025-04-18'),
+(77, 'قدرتی', 'reyhanghodrati@gmail.com', '09125485454', '2025-04-15 07:26:18', 152, '1', '2025-04-23'),
+(78, 'قدرتی', 'reyhanghodrati@gmail.com', '09125485454', '2025-04-15 07:48:37', 154, '2', '2025-04-16'),
+(79, 'قدرتی', 'reyhanghodrati@gmail.com', '09125485454', '2025-04-15 07:53:26', 152, '5', '2025-04-16');
 
 -- --------------------------------------------------------
 
@@ -75,21 +96,6 @@ INSERT INTO `dbo_add_doctors` (`id`, `name`, `takhasos`, `phone`, `created_at`) 
 (152, 'غلامی', 'جراح', '09109253995', '2025-03-15 10:28:16'),
 (154, 'قدرتی', 'دندان ', '0965142856', '2025-03-15 11:38:14'),
 (155, 'صمدی', 'جراح', '09165485454', '2025-04-08 06:07:02');
-
--- --------------------------------------------------------
-
---
--- Table structure for table `dbo_patient`
---
-
-CREATE TABLE `dbo_patient` (
-  `id` int(11) NOT NULL,
-  `full_name` varchar(255) NOT NULL,
-  `email` varchar(255) NOT NULL,
-  `phone` varchar(20) NOT NULL,
-  `doctor_schedule_id` int(11) NOT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -176,10 +182,11 @@ CREATE TABLE `doctor_schedule` (
 --
 
 INSERT INTO `doctor_schedule` (`id`, `doctor_id`, `schedule_id`, `max_capacity`) VALUES
-(6, 152, 1, 4),
-(7, 154, 2, 5),
-(8, 152, 5, 4),
-(9, 155, 6, 5);
+(6, 152, 1, 2),
+(7, 154, 2, 3),
+(8, 152, 5, 5),
+(9, 155, 6, 5),
+(10, 154, 6, 5);
 
 -- --------------------------------------------------------
 
@@ -203,8 +210,8 @@ CREATE TABLE `site_settings` (
 
 INSERT INTO `site_settings` (`id`, `title`, `subtitle`, `background_image`, `created_in`, `last_updated`, `priority`) VALUES
 (28, 'dhgyutdc47fdsfقبتلبل', '83gt58585555rsergs', '../image/vlog4 - Copy.jpg', '2025-03-01 13:02:21', '2025-03-04 05:12:44', 1),
-(29, '89569gyfuy5نتادتاذنتلنرلنا', '83gtrsergsثبصثصgsgsg', '../image/vlog2 - Copy.jpg', '2025-03-04 06:55:12', '2025-03-04 05:12:02', 2),
-(30, 'سلام ', 'fgfgfgfh66666ertgsh', '../image/vlog5 - Copy.jpg', '2025-03-04 06:50:10', '2025-03-04 05:31:19', 3);
+(30, 'سلام ', 'fgfgfgfh66666ertgsh', '../image/piccc.jfif', '2025-03-04 06:50:10', '2025-04-10 05:59:56', 3),
+(32, 'هتعهاهات', 'لببغب', '../image/piccc.jfif', '2025-04-10 07:22:34', '2025-04-12 05:31:16', 4);
 
 -- --------------------------------------------------------
 
@@ -248,13 +255,6 @@ ALTER TABLE `consultation_requests_moshavereh`
 --
 ALTER TABLE `dbo_add_doctors`
   ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `dbo_patient`
---
-ALTER TABLE `dbo_patient`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `doctor_schedule_id` (`doctor_schedule_id`);
 
 --
 -- Indexes for table `dbo_schedule_nobat`
@@ -302,7 +302,7 @@ ALTER TABLE `wh_users`
 -- AUTO_INCREMENT for table `consultation_requests`
 --
 ALTER TABLE `consultation_requests`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=80;
 
 --
 -- AUTO_INCREMENT for table `consultation_requests_moshavereh`
@@ -315,12 +315,6 @@ ALTER TABLE `consultation_requests_moshavereh`
 --
 ALTER TABLE `dbo_add_doctors`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=156;
-
---
--- AUTO_INCREMENT for table `dbo_patient`
---
-ALTER TABLE `dbo_patient`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `dbo_schedule_nobat`
@@ -344,13 +338,13 @@ ALTER TABLE `dental_health_responses`
 -- AUTO_INCREMENT for table `doctor_schedule`
 --
 ALTER TABLE `doctor_schedule`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `site_settings`
 --
 ALTER TABLE `site_settings`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
 
 --
 -- AUTO_INCREMENT for table `wh_users`
@@ -361,12 +355,6 @@ ALTER TABLE `wh_users`
 --
 -- Constraints for dumped tables
 --
-
---
--- Constraints for table `dbo_patient`
---
-ALTER TABLE `dbo_patient`
-  ADD CONSTRAINT `dbo_patient_ibfk_1` FOREIGN KEY (`doctor_schedule_id`) REFERENCES `doctor_schedule` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `doctor_schedule`
