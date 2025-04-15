@@ -51,6 +51,7 @@ $_SESSION["token-expire"] = time() + 3600;
         <input type="hidden" name="token" value="<?= $_SESSION["token"] ?>"/>
         <input type="hidden" name="time_id" id="timeIdInput">
         <input type="hidden" name="tarikh" id="tarikhInput">
+        <input type="hidden" name="timeInput" id="timeInput">
 
         <label>کد امنیتی</label>
         <img src="../php/captcha.php" alt="captcha code">
@@ -105,6 +106,7 @@ $_SESSION["token-expire"] = time() + 3600;
 
                                 // پر کردن input مخفی
                                 document.getElementById("timeIdInput").value = this.getAttribute('data-time-id');
+                                document.getElementById("timeInput").value =item.time_slot ;
                                 document.getElementById("tarikhInput").value = item.date_miladi; // تاریخ میلادی ذخیره می‌شود
                             });
                         }
@@ -121,7 +123,7 @@ $_SESSION["token-expire"] = time() + 3600;
         e.preventDefault(); // جلوگیری از ارسال فرم به‌صورت پیش‌فرض
 
         const formData = new FormData(reservationForm);
-
+         console.log("timeInput:",formData.get('timeInput'));
         fetch('../php/save_request.php', {
             method: 'POST',
             body: formData
