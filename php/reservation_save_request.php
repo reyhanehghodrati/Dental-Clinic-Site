@@ -3,22 +3,22 @@ require_once 'config.php';
 session_start();
 $response = [];
 
-if(!isset($_POST['captcha_input'])&&!isset($_SESSION['captcha'])){
-    echo json_encode(['success' => false, 'message' => ' کد امنیتی تنظیم نشده است '], JSON_UNESCAPED_UNICODE);
-    exit();
-}
-if($_POST['captcha_input']===$_SESSION['captcha']) {
-
-    if (!isset($_POST["token"]) || !isset($_SESSION["token"])) {
-        exit("token not set");
-    }
-//check token:
-    if ($_POST["token"] == $_SESSION["token"]) {
-        if (time() >= $_SESSION["token-expire"]) {
-            unset($_SESSION["token"]);
-            unset($_SESSION["token-expire"]);
-            exit("token expire.reload the form");
-        }
+//if(!isset($_POST['captcha_input'])&&!isset($_SESSION['captcha'])){
+//    echo json_encode(['success' => false, 'message' => ' کد امنیتی تنظیم نشده است '], JSON_UNESCAPED_UNICODE);
+//    exit();
+//}
+//if($_POST['captcha_input']===$_SESSION['captcha']) {
+//
+//    if (!isset($_POST["token"]) || !isset($_SESSION["token"])) {
+//        exit("token not set");
+//    }
+////check token:
+//    if ($_POST["token"] == $_SESSION["token"]) {
+//        if (time() >= $_SESSION["token-expire"]) {
+//            unset($_SESSION["token"]);
+//            unset($_SESSION["token-expire"]);
+//            exit("token expire.reload the form");
+//        }
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
@@ -31,37 +31,42 @@ if($_POST['captcha_input']===$_SESSION['captcha']) {
             $doctor_id = intval($_POST['doctor_id'] ?? 0);
             $time_id = intval($_POST['time_id'] ?? 0);
             $tarikh = $_POST['tarikh'] ?? '';
-            $date_time = $_POST['timeInput'] ?? '';
 
             if (!$name || !$phone || !$doctor_id || !$time_id || !$tarikh) {
                 echo json_encode(['success' => false, 'message' => 'اطلاعات ناقص است'], JSON_UNESCAPED_UNICODE);
                 exit;
             }
+
+
+           $quary_time_id = "SELECT * FROM reservation_schedule_slots WHERE id = $time_id";
+            $checkResult = mysqli_query($conn, $quary_time_id);
+            $time_row = mysqli_fetch_assoc($checkResult);
+
+            $date_time = $time_row['time_slot'];
 //            ------------time_slot check
 
-//            list($start_hour, $end_hour) = explode('-', $date_time);
-//            $start_hour = trim($start_hour);
-//
-//            $now = new DateTime();
-//            $two_week = (new DateTime())->modify('+14 days');
-////            $start_hour=14;
-//            $input_datetime = DateTime::createFromFormat('Y-m-d H', "$tarikh $start_hour");
-//
-//            var_dump($input_datetime);
-//            exit();
-//
-//
-//
-//            if (!$input_datetime) {
-//                echo json_encode([
-//                    'success' => false, 'message' => 'تاریخ انتخاب شده فرمتش معتبر نیست'], JSON_UNESCAPED_UNICODE);
-//                exit();
-//            }
-//
-//            if ($input_datetime < $now || $input_datetime > $two_week) {
-//                echo json_encode(['success' => false, 'message' => 'تاریخ انتخاب شده معتبر نیست'], JSON_UNESCAPED_UNICODE);
-//                exit();
-//            }
+            list($start_hour, $end_hour) = explode('-', $date_time);
+            $start_hour = trim($start_hour);
+            $end_hour = trim($end_hour);
+            $time_zone=new DateTimeZone('Asia/Tehran');
+            $now = new DateTime('now',new DateTimeZone('Asia/Tehran'));
+            $two_week = (new DateTime('now',new DateTimeZone('Asia/Tehran')))->modify('+14 days');
+            $input_start_time = DateTime::createFromFormat('Y-m-d H', "$tarikh $start_hour",$time_zone);
+            $input_end_time = DateTime::createFromFormat('Y-m-d H', "$tarikh $end_hour",$time_zone);
+
+            if (!$input_start_time  || !$input_end_time) {
+                echo json_encode([
+                    'success' => false, 'message' => 'تاریخ انتخاب شده فرمتش معتبر نیست'], JSON_UNESCAPED_UNICODE);
+                exit();
+            }
+
+
+
+            if ($input_start_time < $now || $input_start_time > $two_week ) {
+                if($input_end_time<$now){
+                echo json_encode(['success' => false, 'message' => 'تاریخ انتخاب شده معتبر نیست'], JSON_UNESCAPED_UNICODE);
+                exit();
+            }}
 
 
 //            ---------------- بررسی اینکه ظرفیت هنوز باقی‌ست یا نه
@@ -101,10 +106,10 @@ if($_POST['captcha_input']===$_SESSION['captcha']) {
             }
 
             $stmt->close();
-        }
-    }
+//        }
+//    }
 }
-else{
-    echo json_encode(['success' => false, 'message' => ' کد امنیتی نادرست  است '], JSON_UNESCAPED_UNICODE);
-}
+//else{
+//    echo json_encode(['success' => false, 'message' => ' کد امنیتی نادرست  است '], JSON_UNESCAPED_UNICODE);
+//}
 ?>

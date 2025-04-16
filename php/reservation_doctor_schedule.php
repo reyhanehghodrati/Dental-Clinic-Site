@@ -13,7 +13,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
             $_SESSION['message'] = "<span style='color: red;'>این پزشک قبلاً این زمان‌بندی را ثبت کرده است.</span>";
         } else {
 
-            $insert_sql = "INSERT INTO doctor_schedule (doctor_id, schedule_id) VALUES ('$doctor_id', '$schedule_id')";
+            $insert_sql = "INSERT INTO reservation_doctor_schedules (doctor_id, schedule_id) VALUES ('$doctor_id', '$schedule_id')";
             if ($conn->query($insert_sql) === TRUE) {
                 $_SESSION['message'] = "<span style='color: green;'>ثبت نوبت کاری با موفقیت انجام شد!</span>";
             } else {
