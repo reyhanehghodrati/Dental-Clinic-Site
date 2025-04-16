@@ -103,13 +103,13 @@
     </header>
     <?php
     include('../php/config.php');
-    $sql = "SELECT * FROM site_settings ";
+    $sql = "SELECT * FROM slider_details ";
     $result = mysqli_query($conn , $sql);
     $slider = mysqli_fetch_assoc($result);
     ?>
 <section class="homepage">
     <?php
-    $slider_query = "SELECT * FROM site_settings ORDER BY priority ASC";
+    $slider_query = "SELECT * FROM slider_details ORDER BY priority ASC";
     $slider_result = mysqli_query($conn, $slider_query);
 
     while ($slider = mysqli_fetch_assoc($slider_result)) { ?>
@@ -171,14 +171,14 @@
     </div>
     <div class="review-group">
         <?php
-        include('../php/config.php');
-        $sql = "SELECT * FROM dbo_user_comments ";
+        require_once '../php/config.php';
+        $sql = "SELECT * FROM user_feedback ";
         $result = mysqli_query($conn , $sql);
         $slider = mysqli_fetch_assoc($result);
         ?>
         <section class="homepage">
             <?php
-            $slider_query = "SELECT * FROM dbo_user_comments";
+            $slider_query = "SELECT * FROM user_feedback";
             $slider_result = mysqli_query($conn, $slider_query);
             while ($slider = mysqli_fetch_assoc($slider_result)) { ?>
                 <div class="review-card">

@@ -7,7 +7,7 @@ $_SESSION["token-expire"] = time() + 3600;
 include_once 'config.php';
 
 $id = mysqli_real_escape_string($conn, $_GET['id']);
-$result = mysqli_query($conn, "SELECT * FROM consultation_requests WHERE id = '$id'");
+$result = mysqli_query($conn, "SELECT * FROM reservation_requests WHERE id = '$id'");
 $reservation = mysqli_fetch_assoc($result);
 
 
@@ -32,7 +32,7 @@ $reservation = mysqli_fetch_assoc($result);
 <body>
 <div class="container">
     <h2>فرم رزرو نوبت</h2>
-    <form id="reservationForm" method="POST" action="../php/save_request.php">
+    <form id="reservationForm" method="POST" action="reservation_save_request.php">
         <label>نام و نام خانوادگی:</label>
         <input type="text" name="full_name"  value="<?= htmlspecialchars($reservation['full_name'] ?? '')?>" required>
 
@@ -44,7 +44,7 @@ $reservation = mysqli_fetch_assoc($result);
             <option value="">انتخاب پزشک</option>
             <?php
 
-            $query = "SELECT id, name FROM dbo_add_doctors";
+            $query = "SELECT id, name FROM reservation_doctor_profiles";
             $result = mysqli_query($conn, $query);
 
             while ($row = mysqli_fetch_assoc($result)) {
@@ -91,7 +91,7 @@ $reservation = mysqli_fetch_assoc($result);
         const week = weekSelect.value;
 
         if (doctorId) {
-            fetch(`get_nobat.php?doctor_id=${doctorId}&week=${week}`)
+            fetch(`../php/reservation_nobat_get.php?doctor_id=${doctorId}&week=${week}`)
                 .then(response => response.json())
                 .then(data => {
                     console.log("داده‌های دریافت شده از سرور:", data);

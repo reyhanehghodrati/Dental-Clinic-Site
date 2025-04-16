@@ -5,7 +5,7 @@ include('config.php');
 if (isset($_GET['id']) && is_numeric($_GET['id'])) {
     $id = $conn->real_escape_string($_GET['id']);
 
-    $sql = "DELETE FROM dbo_schedule_nobat WHERE id = '$id'";
+    $sql = "DELETE FROM reservation_schedule_slots WHERE id = '$id'";
 
     if ($conn->query($sql) === TRUE) {
         $_SESSION['message'] = "<span style='color: green;'>بازه با موفقیت حذف شد!</span>";

@@ -25,7 +25,7 @@ $question8 = $_POST['question8'];
 $question9 = $_POST['question9'];
 $question10 = $_POST['question10'];
 
-$sql = "INSERT INTO dental_health_responses (fullname, phone, email, question1, question2, question3, question4, question5, question6, question7, question8, question9, question10)
+$sql = "INSERT INTO health_questions_responses (fullname, phone, email, question1, question2, question3, question4, question5, question6, question7, question8, question9, question10)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
 $stmt = $conn->prepare($sql);

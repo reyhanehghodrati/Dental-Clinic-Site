@@ -1,7 +1,7 @@
 <?php
 include('../php/config.php');
 
-$sql='select * from dbo_user_comments';
+$sql='select * from user_feedback';
 
 if (isset($_POST['name'])){$fullName = $_POST['name'];
     $phone = $_POST['phone'];

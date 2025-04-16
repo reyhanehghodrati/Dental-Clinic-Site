@@ -1,7 +1,7 @@
 <?php
 include ('config.php'); // اتصال به دیتابیس
 
-$query = "SELECT id, name FROM dbo_add_doctors";
+$query = "SELECT id, name FROM reservation_doctor_profiles";
 $result = mysqli_query($conn, $query);
 
 var_dump($result);

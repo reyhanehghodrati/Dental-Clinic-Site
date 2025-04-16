@@ -3,7 +3,7 @@ session_start();
 include('config.php');
 
 $id = mysqli_real_escape_string($conn, $_GET['id']);
-$result = mysqli_query($conn, "SELECT * FROM site_settings WHERE id = '$id'");
+$result = mysqli_query($conn, "SELECT * FROM slider_details WHERE id = '$id'");
 $slider = mysqli_fetch_assoc($result);
 
 function validate_input($input) {
@@ -47,7 +47,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $time = date("Y-m-d H:i:s");
 
     if (empty($errors)) {
-        $update_sql = 'UPDATE site_settings SET title=?, subtitle=?, background_image=?, last_updated=? WHERE id=?';
+        $update_sql = 'UPDATE slider_details SET title=?, subtitle=?, background_image=?, last_updated=? WHERE id=?';
         $state = mysqli_prepare($conn, $update_sql);
 
         mysqli_stmt_bind_param($state, "ssssi", $title, $subtitle, $background_image, $time, $id);

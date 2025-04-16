@@ -3,7 +3,10 @@ require_once 'config.php';
 session_start();
 $response = [];
 
-
+if(!isset($_POST['captcha_input'])&&!isset($_SESSION['captcha'])){
+    echo json_encode(['success' => false, 'message' => ' کد امنیتی تنظیم نشده است '], JSON_UNESCAPED_UNICODE);
+    exit();
+}
 if($_POST['captcha_input']===$_SESSION['captcha']) {
 
     if (!isset($_POST["token"]) || !isset($_SESSION["token"])) {
@@ -36,32 +39,37 @@ if($_POST['captcha_input']===$_SESSION['captcha']) {
             }
 //            ------------time_slot check
 
-            list($start_hour, $end_hour) = explode('-', $date_time);
-            $start_hour = trim($start_hour);
-
-            $now = new DateTime();
-            $two_week = (new DateTime())->modify('+14 days');
-//            $start_hour=14;
-            $input_datetime = DateTime::createFromFormat('Y-m-d H', "$tarikh $start_hour");
-
-            if (!$input_datetime) {
-                echo json_encode([
-                    'success' => false, 'message' => 'تاریخ انتخاب شده فرمتش معتبر نیست'], JSON_UNESCAPED_UNICODE);
-                exit();
-            }
-
-            if ($input_datetime < $now || $input_datetime > $two_week) {
-                echo json_encode(['success' => false, 'message' => 'تاریخ انتخاب شده معتبر نیست'], JSON_UNESCAPED_UNICODE);
-                exit();
-            }
+//            list($start_hour, $end_hour) = explode('-', $date_time);
+//            $start_hour = trim($start_hour);
+//
+//            $now = new DateTime();
+//            $two_week = (new DateTime())->modify('+14 days');
+////            $start_hour=14;
+//            $input_datetime = DateTime::createFromFormat('Y-m-d H', "$tarikh $start_hour");
+//
+//            var_dump($input_datetime);
+//            exit();
+//
+//
+//
+//            if (!$input_datetime) {
+//                echo json_encode([
+//                    'success' => false, 'message' => 'تاریخ انتخاب شده فرمتش معتبر نیست'], JSON_UNESCAPED_UNICODE);
+//                exit();
+//            }
+//
+//            if ($input_datetime < $now || $input_datetime > $two_week) {
+//                echo json_encode(['success' => false, 'message' => 'تاریخ انتخاب شده معتبر نیست'], JSON_UNESCAPED_UNICODE);
+//                exit();
+//            }
 
 
 //            ---------------- بررسی اینکه ظرفیت هنوز باقی‌ست یا نه
 
                 $checkQuery = "
             SELECT ds.max_capacity, COUNT(cr.id) AS reserved
-            FROM doctor_schedule ds
-            LEFT JOIN consultation_requests cr
+            FROM reservation_doctor_schedules ds
+            LEFT JOIN reservation_requests cr
                 ON cr.doctor_id = ds.doctor_id
                 AND cr.time_id = $time_id
                 AND cr.tarikh = '$tarikh'
@@ -80,27 +88,10 @@ if($_POST['captcha_input']===$_SESSION['captcha']) {
             }
 
             // ذخیره درخواست مشاوره
-
-                $update_sql = 'UPDATE consultation_requests SET full_name=?, phone=?, doctor_id=?, last_updated=? WHERE id=?';
-                $state = mysqli_prepare($conn, $update_sql);
-                $stmt->bind_param("ssiis", $name,  $phone, $doctor_id, $time_id, $tarikh);
-                mysqli_stmt_bind_param($state, "ssssi", $title, $subtitle, $background_image, $time, $id);
-
-                if (mysqli_stmt_execute($state)) {
-                    $_SESSION['message'] = "<p style='color: #42e230;'>اسلاید بروز شد.</p>";
-                } else {
-                    $_SESSION['message'] = "<p style='color: red;'>خطا در بروزرسانی اسلاید.</p>";
-                }
-
-                mysqli_stmt_close($state);
-
-                header("Location: " . $_SERVER['PHP_SELF'] . "?id=$id");
-                exit();
-            } else {
-                $_SESSION['message'] = "<p style='color: red;'>" . implode("<br>", $errors) . "</p>";
-            }
-
-
+            $stmt = $conn->prepare("
+        INSERT INTO reservation_requests (full_name, email ,phone , doctor_id, time_id, tarikh) 
+        VALUES (?, ?, ?, ?, ?,?)
+    ");
             $stmt->bind_param("sssiis", $name, $email, $phone, $doctor_id, $time_id, $tarikh);
 
             if ($stmt->execute()) {

@@ -6,7 +6,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
     $doctor_id = $_POST['doctor_id'];
     $schedule_id = $_POST['schedule_id'];
     if (!empty($doctor_id) && !empty($schedule_id)) {
-        $check_sql = "SELECT * FROM doctor_schedule WHERE doctor_id = '$doctor_id' AND schedule_id = '$schedule_id'";
+        $check_sql = "SELECT * FROM reservation_doctor_schedules WHERE doctor_id = '$doctor_id' AND schedule_id = '$schedule_id'";
         $check_result = $conn->query($check_sql);
 
         if ($check_result->num_rows > 0) {

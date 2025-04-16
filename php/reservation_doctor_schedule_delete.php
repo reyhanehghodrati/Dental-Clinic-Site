@@ -7,7 +7,7 @@ if (isset($_GET['id'])) {
     $id = $conn->real_escape_string($_GET['id']);
 
     // حذف نوبت از جدول doctor_schedule با شناسه دریافتی
-    $sql = "DELETE FROM doctor_schedule WHERE id = '$id'";
+    $sql = "DELETE FROM reservation_doctor_schedules WHERE id = '$id'";
    
 
     if ($conn->query($sql) === TRUE) {

@@ -8,7 +8,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $name = $conn->real_escape_string($_POST['d-name']);
         $takhasos = $conn->real_escape_string($_POST['d-takhasos']);
         $phone = $conn->real_escape_string($_POST['d-phone']);
-        $sql = "INSERT INTO dbo_add_doctors (name, takhasos, phone) VALUES ('$name', '$takhasos', '$phone')";
+        $sql = "INSERT INTO reservation_doctor_profiles (name, takhasos, phone) VALUES ('$name', '$takhasos', '$phone')";
 
         if ($conn->query($sql) === TRUE) {
             $_SESSION['message'] = "<span style='color: green;'>ثبت پزشک با موفقیت انجام شد!</span>";

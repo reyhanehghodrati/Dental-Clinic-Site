@@ -23,7 +23,7 @@ $_SESSION["token-expire"] = time() + 3600;
 <body>
 <div class="container">
     <h2>فرم رزرو نوبت</h2>
-    <form id="reservationForm" method="POST" action="../php/save_request.php">
+    <form id="reservationForm" method="POST" action="../php/reservation_save_request.php">
         <label>نام و نام خانوادگی:</label>
         <input type="text" name="full_name" required>
 
@@ -36,7 +36,7 @@ $_SESSION["token-expire"] = time() + 3600;
         <label>پزشک:</label>
         <select id="doctorSelect" name="doctor_id" required>
             <option value="">انتخاب پزشک</option>
-            <?php include '../php/get_doctors.php'; ?>
+            <?php require_once '../php/reservation_docs_get.php'; ?>
         </select>
 
         <label>هفته:</label>
@@ -75,7 +75,7 @@ $_SESSION["token-expire"] = time() + 3600;
         const week = weekSelect.value;
 
         if (doctorId) {
-            fetch(`../php/get_nobat.php?doctor_id=${doctorId}&week=${week}`)
+            fetch(`../php/reservation_nobat_get.php?doctor_id=${doctorId}&week=${week}`)
                 .then(response => response.json())
                 .then(data => {
                     console.log("داده‌های دریافت شده از سرور:", data);

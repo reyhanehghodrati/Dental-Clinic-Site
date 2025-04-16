@@ -6,7 +6,7 @@ if (isset($_GET['id']) && isset($_GET['direction'])) {
     $direction = $_GET['direction'];
 
     // دریافت اطلاعات اسلاید فعلی
-    $query = "SELECT id, priority FROM site_settings WHERE id = $id";
+    $query = "SELECT id, priority FROM slider_details WHERE id = $id";
     $result = mysqli_query($conn, $query);
     $current = mysqli_fetch_assoc($result);
 
@@ -18,9 +18,9 @@ if (isset($_GET['id']) && isset($_GET['direction'])) {
 
     // جستجوی رکوردی که باید جابجا شود
     if ($direction == 'up') {
-        $swap_query = "SELECT id, priority FROM site_settings WHERE priority < $current_priority ORDER BY priority DESC LIMIT 1";
+        $swap_query = "SELECT id, priority FROM slider_details WHERE priority < $current_priority ORDER BY priority DESC LIMIT 1";
     } else {
-        $swap_query = "SELECT id, priority FROM site_settings WHERE priority > $current_priority ORDER BY priority ASC LIMIT 1";
+        $swap_query = "SELECT id, priority FROM slider_details WHERE priority > $current_priority ORDER BY priority ASC LIMIT 1";
     }
 
     $swap_result = mysqli_query($conn, $swap_query);
@@ -28,8 +28,8 @@ if (isset($_GET['id']) && isset($_GET['direction'])) {
 
     if ($swap) {
         // جابجا کردن مقدار اولویت‌ها
-        mysqli_query($conn, "UPDATE site_settings SET priority = {$swap['priority']} WHERE id = $id");
-        mysqli_query($conn, "UPDATE site_settings SET priority = $current_priority WHERE id = {$swap['id']}");
+        mysqli_query($conn, "UPDATE slider_details SET priority = {$swap['priority']} WHERE id = $id");
+        mysqli_query($conn, "UPDATE slider_details SET priority = $current_priority WHERE id = {$swap['id']}");
     }
 
     // بازگشت به داشبورد

@@ -24,8 +24,8 @@ $daysMap = [
 
 $query = "
   SELECT s.day_of_week, s.time_slot, s.id AS schedule_id
-  FROM doctor_schedule ds
-  JOIN dbo_schedule_nobat s ON ds.schedule_id = s.id
+  FROM reservation_doctor_schedules ds
+  JOIN reservation_schedule_slots s ON ds.schedule_id = s.id
   WHERE ds.doctor_id = $doctor_id
 ";
 
@@ -54,7 +54,7 @@ while ($row = mysqli_fetch_assoc($result)) {
     // گرفتن time_id برای این روز و ساعت
     $query_time_id = "
         SELECT id 
-        FROM dbo_schedule_nobat 
+        FROM reservation_schedule_slots 
         WHERE day_of_week = '$day' AND time_slot = '$time'
     ";
     $result_time_id = mysqli_query($conn, $query_time_id);
@@ -65,8 +65,8 @@ while ($row = mysqli_fetch_assoc($result)) {
     // محاسبه ظرفیت باقی‌مانده
     $query_capacity = "
         SELECT ds.max_capacity, COUNT(cr.id) AS reserved
-        FROM doctor_schedule ds
-        LEFT JOIN consultation_requests cr
+        FROM reservation_doctor_schedules ds
+        LEFT JOIN reservation_requests cr
             ON cr.doctor_id = ds.doctor_id
             AND cr.time_id = '$time_id'
             AND cr.tarikh = '$date_miladi'

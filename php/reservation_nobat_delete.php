@@ -6,7 +6,7 @@ if (isset($_GET['id'])) {
     // گرفتن id از URL
     $id = $conn->real_escape_string($_GET['id']);
 
-    $sql = "DELETE FROM consultation_requests WHERE id = '$id'";
+    $sql = "DELETE FROM reservation_requests WHERE id = '$id'";
    
 
     if ($conn->query($sql) === TRUE) {
