@@ -23,7 +23,7 @@ $_SESSION["token-expire"] = time() + 3600;
 <body>
 <div class="container">
     <h2>فرم رزرو نوبت</h2>
-    <form id="reservationForm" method="POST" action="../php/otp_send_index.php">
+    <form id="reservationForm" method="POST" action="../php/otp_submit.php">
         <label>نام و نام خانوادگی:</label>
         <input type="text" name="full_name" required>
 
@@ -51,7 +51,7 @@ $_SESSION["token-expire"] = time() + 3600;
         <input type="hidden" name="token" value="<?= $_SESSION["token"] ?>"/>
         <input type="hidden" name="time_id" id="timeIdInput">
         <input type="hidden" name="tarikh" id="tarikhInput">
-<!---->
+
 <!--        <label>کد امنیتی</label>-->
 <!--        <img src="../php/captcha.php" alt="captcha code">-->
 <!--        <input type="text" name="captcha_input" placeholder="کد را وارد کنید ">-->

@@ -38,10 +38,10 @@ class SendSms
 
     //--------------------------------
     //public static function sendMsgToUser($mobile,$email){
-    function sendMsgToUser($mobile, $otp){
+    function sendMsgToUser($phone, $otp){
         $curl = curl_init();
         curl_setopt_array($curl, array(
-            CURLOPT_URL => 'https://api.kavenegar.com/v1/'.$this->param['apiKey'].'/verify/lookup.json?receptor='.$mobile.'&token='.$otp.'&template='.$this->param['userTemplate'],
+            CURLOPT_URL => 'https://api.kavenegar.com/v1/'.$this->param['apiKey'].'/verify/lookup.json?receptor='.$phone.'&token='.$otp.'&template='.$this->param['userTemplate'],
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => '',
             CURLOPT_MAXREDIRS => 10,

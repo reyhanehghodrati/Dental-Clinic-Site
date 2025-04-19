@@ -64,7 +64,7 @@ session_start();
 <div class="container">
     <h2>لطفاً شماره موبایل خود را وارد کنید</h2>
     <form action="otp_submit.php" method="post">
-        <input type="text" name="mobile" placeholder="مثلاً 09121234567" required>
+        <input type="text" name="phone" placeholder="مثلاً 09121234567" required>
         <input type="submit" value="ثبت">
     </form>
 </div>

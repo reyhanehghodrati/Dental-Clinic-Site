@@ -12,68 +12,82 @@ $response = [];
 //    if (!isset($_POST["token"]) || !isset($_SESSION["token"])) {
 //        exit("token not set");
 //    }
-////check token:
+//check token:
 //    if ($_POST["token"] == $_SESSION["token"]) {
 //        if (time() >= $_SESSION["token-expire"]) {
 //            unset($_SESSION["token"]);
 //            unset($_SESSION["token-expire"]);
 //            exit("token expire.reload the form");
 //        }
-
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+//        if ($_SERVER["REQUEST_METHOD"] == "POST") {
+//            $input = $_POST['otp_input'];
+//
+//            if ($input == $_SESSION['otp']) {
+//
+//    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 //    echo json_encode(['post_data' => $_POST], JSON_UNESCAPED_UNICODE);
 //    exit;
 
+//
+//        $name = $_POST['full_name'] ?? '';
+//        $phone = $_POST['phone'] ?? '';
+//        $email = isset($_POST['email']) ? mysqli_real_escape_string($conn, $_POST['email']) : '';
+//        $doctor_id = intval($_POST['doctor_id'] ?? 0);
+//        $time_id = intval($_POST['time_id'] ?? 0);
+//        $tarikh = $_POST['tarikh'] ?? '';
 
 
-            $name = $_POST['full_name'] ?? '';
-            $phone = $_POST['phone'] ?? '';
-            $email = isset($_POST['email']) ? mysqli_real_escape_string($conn, $_POST['email']) : '';
-            $doctor_id = intval($_POST['doctor_id'] ?? 0);
-            $time_id = intval($_POST['time_id'] ?? 0);
-            $tarikh = $_POST['tarikh'] ?? '';
 
-            if (!$name || !$phone || !$doctor_id || !$time_id || !$tarikh) {
-                echo json_encode(['success' => false, 'message' => 'اطلاعات ناقص است'], JSON_UNESCAPED_UNICODE);
-                exit;
-            }
+        $name = $_SESSION['reservation_data']['full_name'] ?? '';
+        $phone = $_SESSION['reservation_data']['phone'] ?? '';
+        $email = $_SESSION['reservation_data']['email'] ?? '';
+        $doctor_id = intval($_SESSION['reservation_data']['doctor_id'] ?? 0);
+        $time_id = intval($_SESSION['reservation_data']['time_id'] ?? 0);
+        $tarikh = $_SESSION['reservation_data']['tarikh'] ?? '';
 
 
-           $quary_time_id = "SELECT * FROM reservation_schedule_slots WHERE id = $time_id";
-            $checkResult = mysqli_query($conn, $quary_time_id);
-            $time_row = mysqli_fetch_assoc($checkResult);
 
-            $date_time = $time_row['time_slot'];
+        if (!$name || !$phone || !$doctor_id || !$time_id || !$tarikh) {
+            echo json_encode(['success' => false, 'message' => 'اطلاعات ناقص است'], JSON_UNESCAPED_UNICODE);
+            exit;
+        }
+
+
+        $quary_time_id = "SELECT * FROM reservation_schedule_slots WHERE id = $time_id";
+        $checkResult = mysqli_query($conn, $quary_time_id);
+        $time_row = mysqli_fetch_assoc($checkResult);
+
+        $date_time = $time_row['time_slot'];
 //            ------------time_slot check
 
-            list($start_hour, $end_hour) = explode('-', $date_time);
-            $start_hour = trim($start_hour);
-            $end_hour = trim($end_hour);
-            $time_zone=new DateTimeZone('Asia/Tehran');
-            $now = new DateTime('now',new DateTimeZone('Asia/Tehran'));
-            $two_week = (new DateTime('now',new DateTimeZone('Asia/Tehran')))->modify('+14 days');
-            $input_start_time = DateTime::createFromFormat('Y-m-d H', "$tarikh $start_hour",$time_zone);
-            $input_end_time = DateTime::createFromFormat('Y-m-d H', "$tarikh $end_hour",$time_zone);
+        list($start_hour, $end_hour) = explode('-', $date_time);
+        $start_hour = trim($start_hour);
+        $end_hour = trim($end_hour);
+        $time_zone = new DateTimeZone('Asia/Tehran');
+        $now = new DateTime('now', new DateTimeZone('Asia/Tehran'));
+        $two_week = (new DateTime('now', new DateTimeZone('Asia/Tehran')))->modify('+14 days');
+        $input_start_time = DateTime::createFromFormat('Y-m-d H', "$tarikh $start_hour", $time_zone);
+        $input_end_time = DateTime::createFromFormat('Y-m-d H', "$tarikh $end_hour", $time_zone);
 
-            if (!$input_start_time  || !$input_end_time) {
-                echo json_encode([
-                    'success' => false, 'message' => 'تاریخ انتخاب شده فرمتش معتبر نیست'], JSON_UNESCAPED_UNICODE);
-                exit();
-            }
+        if (!$input_start_time || !$input_end_time) {
+            echo json_encode([
+                'success' => false, 'message' => 'تاریخ انتخاب شده فرمتش معتبر نیست'], JSON_UNESCAPED_UNICODE);
+            exit();
+        }
 
 
-
-            if ($input_start_time < $now || $input_start_time > $two_week ) {
-                if($input_end_time<$now){
+        if ($input_start_time < $now || $input_start_time > $two_week) {
+            if ($input_end_time < $now) {
                 echo json_encode(['success' => false, 'message' => 'تاریخ انتخاب شده معتبر نیست'], JSON_UNESCAPED_UNICODE);
                 exit();
-            }}
+            }
+        }
 
 
 //            ---------------- بررسی اینکه ظرفیت هنوز باقی‌ست یا نه
 
-                $checkQuery = "
+        $checkQuery = "
             SELECT ds.max_capacity, COUNT(cr.id) AS reserved
             FROM reservation_doctor_schedules ds
             LEFT JOIN reservation_requests cr
@@ -83,35 +97,39 @@ $response = [];
             WHERE ds.doctor_id = $doctor_id AND ds.schedule_id = $time_id
             GROUP BY ds.max_capacity
         ";
-            $checkResult = mysqli_query($conn, $checkQuery);
-            $row = mysqli_fetch_assoc($checkResult);
+        $checkResult = mysqli_query($conn, $checkQuery);
+        $row = mysqli_fetch_assoc($checkResult);
 
-            $max_capacity = $row['max_capacity'] ?? 0;
-            $reserved = $row['reserved'] ?? 0;
+        $max_capacity = $row['max_capacity'] ?? 0;
+        $reserved = $row['reserved'] ?? 0;
 
-            if ($reserved >= $max_capacity) {
-                echo json_encode(['success' => false, 'message' => 'ظرفیت این نوبت پر شده است'], JSON_UNESCAPED_UNICODE);
-                exit;
-            }
+        if ($reserved >= $max_capacity) {
+            echo json_encode(['success' => false, 'message' => 'ظرفیت این نوبت پر شده است'], JSON_UNESCAPED_UNICODE);
+            exit;
+        }
 
-            // ذخیره درخواست مشاوره
-            $stmt = $conn->prepare("
+        // ذخیره درخواست مشاوره
+        $stmt = $conn->prepare("
         INSERT INTO reservation_requests (full_name, email ,phone , doctor_id, time_id, tarikh) 
         VALUES (?, ?, ?, ?, ?,?)
     ");
-            $stmt->bind_param("sssiis", $name, $email, $phone, $doctor_id, $time_id, $tarikh);
+        $stmt->bind_param("sssiis", $name, $email, $phone, $doctor_id, $time_id, $tarikh);
 
-            if ($stmt->execute()) {
-                echo json_encode(['success' => true, 'message' => 'نوبت با موفقیت رزرو شد'], JSON_UNESCAPED_UNICODE);
-            } else {
-                echo json_encode(['success' => false, 'message' => 'خطا در ذخیره اطلاعات'], JSON_UNESCAPED_UNICODE);
-            }
+        if ($stmt->execute()) {
+            echo json_encode(['success' => true, 'message' => 'نوبت با موفقیت رزرو شد'], JSON_UNESCAPED_UNICODE);
+        } else {
+            echo json_encode(['success' => false, 'message' => 'خطا در ذخیره اطلاعات'], JSON_UNESCAPED_UNICODE);
+        }
 
-            $stmt->close();
+        $stmt->close();
 //        }
 //    }
-}
+//    }
 //else{
 //    echo json_encode(['success' => false, 'message' => ' کد امنیتی نادرست  است '], JSON_UNESCAPED_UNICODE);
+//}
+//
+//}}else{
+//    echo "<h2 style='color: red; text-align:center;'>کد وارد شده اشتباه است</h2>";
 //}
 ?>
