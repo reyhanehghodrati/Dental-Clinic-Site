@@ -70,7 +70,7 @@ while ($row = mysqli_fetch_assoc($result)) {
             ON cr.doctor_id = ds.doctor_id
             AND cr.time_id = '$time_id'
             AND cr.tarikh = '$date_miladi'
-        WHERE ds.doctor_id = $doctor_id AND ds.schedule_id = '$time_id'
+        WHERE ds.doctor_id = $doctor_id AND ds.schedule_id = '$time_id' 
         GROUP BY ds.max_capacity
     ";
     $result_capacity = mysqli_query($conn, $query_capacity);

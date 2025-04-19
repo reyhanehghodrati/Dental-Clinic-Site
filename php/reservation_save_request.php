@@ -94,7 +94,7 @@ $response = [];
                 ON cr.doctor_id = ds.doctor_id
                 AND cr.time_id = $time_id
                 AND cr.tarikh = '$tarikh'
-            WHERE ds.doctor_id = $doctor_id AND ds.schedule_id = $time_id
+            WHERE ds.doctor_id = $doctor_id AND ds.schedule_id = $time_id 
             GROUP BY ds.max_capacity
         ";
         $checkResult = mysqli_query($conn, $checkQuery);
@@ -107,13 +107,13 @@ $response = [];
             echo json_encode(['success' => false, 'message' => 'ظرفیت این نوبت پر شده است'], JSON_UNESCAPED_UNICODE);
             exit;
         }
-
+        $satus=0;
         // ذخیره درخواست مشاوره
         $stmt = $conn->prepare("
-        INSERT INTO reservation_requests (full_name, email ,phone , doctor_id, time_id, tarikh) 
-        VALUES (?, ?, ?, ?, ?,?)
+        INSERT INTO reservation_requests (full_name, email ,phone , doctor_id, time_id, tarikh, STATUS) 
+        VALUES (?, ?, ?, ?, ?,?,?)
     ");
-        $stmt->bind_param("sssiis", $name, $email, $phone, $doctor_id, $time_id, $tarikh);
+        $stmt->bind_param("sssiisi", $name, $email, $phone, $doctor_id, $time_id, $tarikh,$satus);
 
         if ($stmt->execute()) {
             echo json_encode(['success' => true, 'message' => 'نوبت با موفقیت رزرو شد'], JSON_UNESCAPED_UNICODE);
