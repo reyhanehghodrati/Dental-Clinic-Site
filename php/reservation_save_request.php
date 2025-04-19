@@ -25,6 +25,8 @@ $response = [];
 //    echo json_encode(['post_data' => $_POST], JSON_UNESCAPED_UNICODE);
 //    exit;
 
+
+
             $name = $_POST['full_name'] ?? '';
             $phone = $_POST['phone'] ?? '';
             $email = isset($_POST['email']) ? mysqli_real_escape_string($conn, $_POST['email']) : '';
