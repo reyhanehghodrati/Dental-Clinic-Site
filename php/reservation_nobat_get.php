@@ -62,6 +62,7 @@ while ($row = mysqli_fetch_assoc($result)) {
 
     $time_id = $row_time_id['id'];
 
+
     // محاسبه ظرفیت باقی‌مانده
     $query_capacity = "
         SELECT ds.max_capacity, COUNT(cr.id) AS reserved
@@ -70,6 +71,7 @@ while ($row = mysqli_fetch_assoc($result)) {
             ON cr.doctor_id = ds.doctor_id
             AND cr.time_id = '$time_id'
             AND cr.tarikh = '$date_miladi'
+            AND cr.STATUS=1
         WHERE ds.doctor_id = $doctor_id AND ds.schedule_id = '$time_id' 
         GROUP BY ds.max_capacity
     ";
@@ -86,7 +88,9 @@ while ($row = mysqli_fetch_assoc($result)) {
         'date_shamsi' => $jdate,
         'date_miladi' => $date_miladi,
         'capacity_left' => $capacityLeft,
-        'time_id' => $time_id
+        'time_id' => $time_id,
+        '$max_capacity'=>$max_capacity,
+        '$reserved'=>$reserved
     ];
 }
 

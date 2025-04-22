@@ -451,7 +451,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <td><?php echo $row['name']; ?></td>
                     <td><?php echo $row['takhasos']; ?></td>
                     <td><?php echo $row['phone']; ?></td>
-                    <td><a href="reservation_docs_delete.php.php?id=<?= $row["id"] ?> "methods="get" onclick="return confirm('ایا مطمین هستید')" >حذف     </a></td>
+                    <td><a href="reservation_docs_delete.php?id=<?= $row["id"] ?> "methods="get" onclick="return confirm('ایا مطمین هستید')" >حذف     </a></td>
                 </tr>
             <?php } ?>
             </tbody>

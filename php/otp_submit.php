@@ -31,7 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 //        'captcha_input'=>$_POST['captcha_input']
     ];
 
-    $_SESSION['otp'] = rand(1000, 9999); // یا هر روشی که OTP درست می‌کنی
+    $_SESSION['otp'] = rand(1000, 9999);
     $sms = new SendSms();
     $sms->sendMsgToUser($_POST['phone'], $_SESSION['otp']);
 

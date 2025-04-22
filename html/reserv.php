@@ -23,7 +23,7 @@ $_SESSION["token-expire"] = time() + 3600;
 <body>
 <div class="container">
     <h2>فرم رزرو نوبت</h2>
-    <form id="reservationForm" method="POST" action="../php/otp_submit.php">
+    <form id="reservationForm" method="POST" action="../php/reservation_save_request.php">
         <label>نام و نام خانوادگی:</label>
         <input type="text" name="full_name" required>
 
@@ -51,12 +51,12 @@ $_SESSION["token-expire"] = time() + 3600;
         <input type="hidden" name="token" value="<?= $_SESSION["token"] ?>"/>
         <input type="hidden" name="time_id" id="timeIdInput">
         <input type="hidden" name="tarikh" id="tarikhInput">
+        <!---->
+        <!--        <label>کد امنیتی</label>-->
+        <!--        <img src="../php/captcha.php" alt="captcha code">-->
+        <!--        <input type="text" name="captcha_input" placeholder="کد را وارد کنید ">-->
 
-<!--        <label>کد امنیتی</label>-->
-<!--        <img src="../php/captcha.php" alt="captcha code">-->
-<!--        <input type="text" name="captcha_input" placeholder="کد را وارد کنید ">-->
-
-        <button type="submit">ثبت نوبت</button>
+        <button type="submit" >ثبت نوبت</button>
     </form>
     <div id="responseMessage" style="margin-top: 20px;"></div>
 </div>
@@ -116,40 +116,40 @@ $_SESSION["token-expire"] = time() + 3600;
         }
     }
 
+    // ارسال رزرو
+    // reservationForm.addEventListener('submit', function (e) {
+    //     e.preventDefault(); // جلوگیری از ارسال فرم به‌صورت پیش‌فرض
+    //
+    //     const formData = new FormData(reservationForm);
+    //     console.log("timeInput:",formData.get('timeInput'));
+    //     fetch('../php/reservation_save_request.php', {
+    //         method: 'POST',
+    //         body: formData
+    //     })
+    //         .then(response => response.json())
+    //         .then(data => {
+    //             responseMessage.innerHTML = `<div style="padding: 10px; background-color: ${data.status === 'success' ? '#d4edda' : '#f8d7da'}; color: ${data.status === 'success' ? '#155724' : '#721c24'}; border: 1px solid ${data.status === 'success' ? '#c3e6cb' : '#f5c6cb'}; border-radius: 5px;">${data.message}</div>`;
+    //
+    //             if (data.status === 'success') {
+    //
+    //                 // reservationForm.reset();  // ریست کردن فرم پس از ارسال موفق
+    //                 // loadTimes();  // بارگذاری دوباره نوبت‌ها برای نمایش ظرفیت‌های جدید
+    //                 window.location.href="../php/otp_send_index.php";
+    //             }
+    //         })
+    //         .catch(error => {
+    //             console.error('Error:', error);
+    //             responseMessage.innerHTML = '<div style="padding: 10px; background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; border-radius: 5px;">خطا در ارسال اطلاعات. لطفا دوباره تلاش کنید.</div>';
+    //         });
+    // });
 
+    // افزودن EventListener برای تغییر پزشک و هفته
+    doctorSelect.addEventListener('change', loadTimes);
+    weekSelect.addEventListener('change', loadTimes);
 
+    // بارگذاری نوبت‌ها پس از لود شدن صفحه
+    document.addEventListener('DOMContentLoaded', loadTimes);
+</script>
 
-//    // ارسال رزرو
-//    reservationForm.addEventListener('submit', function (e) {
-//        e.preventDefault(); // جلوگیری از ارسال فرم به‌صورت پیش‌فرض
-//
-//        const formData = new FormData(reservationForm);
-//         console.log("timeInput:",formData.get('timeInput'));
-//        fetch('../php/otp_check_index.php', {
-//            method: 'POST',
-//            body: formData
-//        })
-//            .then(response => response.json())
-//            .then(data => {
-//                responseMessage.innerHTML = `<div style="padding: 10px; background-color: ${data.status === 'success' ? '#d4edda' : '#f8d7da'}; color: ${data.status === 'success' ? '#155724' : '#721c24'}; border: 1px solid ${data.status === 'success' ? '#c3e6cb' : '#f5c6cb'}; border-radius: 5px;">${data.message}</div>`;
-//
-//                if (data.status === 'success') {
-//                    reservationForm.reset();  // ریست کردن فرم پس از ارسال موفق
-//                    loadTimes();  // بارگذاری دوباره نوبت‌ها برای نمایش ظرفیت‌های جدید
-//                }
-//            })
-//            .catch(error => {
-//                console.error('Error:', error);
-//                responseMessage.innerHTML = '<div style="padding: 10px; background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; border-radius: 5px;">خطا در ارسال اطلاعات. لطفا دوباره تلاش کنید.</div>';
-//            });
-//    });
-//
-   // افزودن EventListener برای تغییر پزشک و هفته
-   doctorSelect.addEventListener('change', loadTimes);
-   weekSelect.addEventListener('change', loadTimes);
-
-   // بارگذاری نوبت‌ها پس از لود شدن صفحه
-   document.addEventListener('DOMContentLoaded', loadTimes);
-//</script>
 </body>
 </html>
