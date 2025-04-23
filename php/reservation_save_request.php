@@ -8,16 +8,19 @@ function alert($msg)
 {
     echo "<script type='text/javascript'>alert('$msg');</script>";
 }
-
-if(!isset($_POST['captcha_input'])&&!isset($_SESSION['captcha'])){
-    echo json_encode(['success' => false, 'message' => ' کد امنیتی تنظیم نشده است '], JSON_UNESCAPED_UNICODE);
-    exit();
-}
-if($_POST['captcha_input']===$_SESSION['captcha']) {
-
-    if (!isset($_POST["token"]) || !isset($_SESSION["token"])) {
-        exit("token not set");
-    }
+//
+//if(!isset($_POST['captcha_input'])&&!isset($_SESSION['captcha'])){
+//$_SESSION['message'] = "<p style='color: red;'>کد امنیتی تنظیم نشده است </p>";
+//header("Location: ../html/reserv.php");
+//
+////    echo json_encode(['success' => false, 'message' => ' کد امنیتی تنظیم نشده است '], JSON_UNESCAPED_UNICODE);
+//    exit();
+//}
+//if($_POST['captcha_input']===$_SESSION['captcha']) {
+//
+//    if (!isset($_POST["token"]) || !isset($_SESSION["token"])) {
+//        exit("token not set");
+//    }
 //check token:
     if ($_POST["token"] == $_SESSION["token"]) {
         if (time() >= $_SESSION["token-expire"]) {
@@ -39,7 +42,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $tarikh = $_POST['tarikh'] ?? '';
 
     if (!$name || !$phone || !$doctor_id || !$time_id || !$tarikh) {
-        echo json_encode(['success' => false, 'message' => 'اطلاعات ناقص است'], JSON_UNESCAPED_UNICODE);
+        $_SESSION['message'] = "<p style='color: red;'>اطلاعات ناقص است</p>";
+        header("Location: ../html/reserv.php");
+
+//        echo json_encode(['success' => false, 'message' => 'اطلاعات ناقص است'], JSON_UNESCAPED_UNICODE);
         exit;
     }
 
@@ -61,10 +67,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $input_end_time = DateTime::createFromFormat('Y-m-d H', "$tarikh $end_hour",$time_zone);
 
     if (!$input_start_time  || !$input_end_time) {
+        $_SESSION['message'] = "<p style='color: red;'>تاریخ انتخاب شده فرمتش معتبر نیست</p>";
+        header("Location: ../html/reserv.php");
 
-
-        echo json_encode([
-            'success' => false, 'message' => 'تاریخ انتخاب شده فرمتش معتبر نیست'], JSON_UNESCAPED_UNICODE);
+//        echo json_encode([
+//            'success' => false, 'message' => 'تاریخ انتخاب شده فرمتش معتبر نیست'], JSON_UNESCAPED_UNICODE);
         exit();
     }
 
@@ -72,8 +79,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($input_start_time < $now || $input_start_time > $two_week ) {
         if($input_end_time<$now){
-            alert("تاریخ انتخاب شده معتبر نیست");
+            $_SESSION['message'] = "<p style='color: red;'>تاریخ انتخاب شده معتبر نیست</p>";
+//            alert("تاریخ انتخاب شده معتبر نیست");
 //            echo json_encode(['success' => false, 'message' => 'تاریخ انتخاب شده معتبر نیست'], JSON_UNESCAPED_UNICODE);
+            header("Location: ../html/reserv.php");
             exit();
         }}
 
@@ -100,7 +109,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $reserved = $row['reserved'] ?? 0;
 
     if ($reserved >= $max_capacity) {
-        alert("ظرفیت این نوبت پر شده است");
+        $_SESSION['message'] = "<p style='color: red;'>ظرفیت این نوبت پر شده است</p>";
+        header("Location: ../html/reserv.php");
+//        alert("ظرفیت این نوبت پر شده است");
 //        echo json_encode(['success' => false, 'message' => 'ظرفیت این نوبت پر شده است'], JSON_UNESCAPED_UNICODE);
         exit;
     }
@@ -113,13 +124,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt->bind_param("sssiisi", $name, $email, $phone, $doctor_id, $time_id, $tarikh,$STATUS0);
     if ($stmt->execute()) {
         $request_id=$conn->insert_id;
+        $_SESSION['message'] = "<p style='color: #42e230;'>نوبت با موفقیت رزرو شد</p>";
+
 //        header('Content-type:application/json');
 //        echo json_encode(['success' => true, 'message' => 'نوبت با موفقیت رزرو شد'], JSON_UNESCAPED_UNICODE);
     } else {
-        alert('خطا در ذخیره اطلاعات');
+        $_SESSION['message'] = "<p style='color: red;'>خطا در ذخیره اطلاعات</p>";
+        header("Location: ../html/reserv.php");
+//        alert('خطا در ذخیره اطلاعات');
 //        echo json_encode(['success' => false, 'message' => 'خطا در ذخیره اطلاعات'], JSON_UNESCAPED_UNICODE);
         exit();
     }
+
     $_SESSION['otp'] = rand(1000, 9999);
     $otp=$_SESSION['otp'];
     $sms = new SendSms();
@@ -129,7 +145,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt->close();
 
     $stmt2 = $conn->prepare("
-        INSERT INTO reservation_phone_numbers (phone_number , code, status,request_id) 
+        INSERT INTO reservation_phone_numbers (phone_number , code, status,request_id)
         VALUES (?, ?, ?,?)
     ");
     $stmt2->bind_param("siii", $phone, $otp, $STATUS0,$request_id);
@@ -140,81 +156,84 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
     }
-
-}
+//
+//}
 else{
-    alert('کد امنیتی نادرست  است');
-    exit();
+    $_SESSION['message'] = "<p style='color: red;'>کد امنیتی نادرست  است</p>";
+    header("Location: ../html/reserv.php");
+    exit;
+//    alert('کد امنیتی نادرست  است');
 //    echo json_encode(['success' => false, 'message' => ' کد امنیتی نادرست  است '], JSON_UNESCAPED_UNICODE);
 }
-
+header("Location: otp_check_index.php");
+exit();
 ?>
-
-<!DOCTYPE html>
-<html lang="fa">
-<head>
-    <meta charset="UTF-8">
-    <title>تایید شماره تماس</title>
-    <style>
-        * {
-            box-sizing: border-box;
-        }
-
-        body, html {
-            height: 100%;
-            margin: 0;
-            font-family: sans-serif;
-            /*background-color: #f0f0f0;*/
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .container {
-            background-color: white;
-            padding: 30px 40px;
-            border-radius: 16px;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-            text-align: center;
-        }
-
-        input[type="text"] {
-            width: 100%;
-            padding: 10px;
-            margin-top: 15px;
-            margin-bottom: 20px;
-            border-radius: 8px;
-            border: 1px solid #ccc;
-            font-size: 13px;
-        }
-
-        input[type="submit"] {
-            background-color: #2d7fe3;
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            font-size: 16px;
-            border-radius: 8px;
-            cursor: pointer;
-        }
-
-        input[type="submit"]:hover {
-            background-color: #0b3069;
-        }
-
-        h2 {
-            margin-bottom: 20px;
-        }
-    </style>
-</head>
-<body style="text-align:center; margin-top:100px;">
-<div class="container">
-    <h2>کد ارسال شده به شماره <?php echo $_SESSION['phone']; ?> را وارد کنید</h2>
-    <form method="post" action="otp_check.php">
-        <input type="text" name="otp_input" required>
-        <br><br>
-        <input type="submit" value="تایید">
-    </form>
-</div>
-</body>
-</html>
+<!---->
+<!--<!DOCTYPE html>-->
+<!--<html lang="fa">-->
+<!--<head>-->
+<!--    <meta charset="UTF-8">-->
+<!--    <title>تایید شماره تماس</title>-->
+<!--    <style>-->
+<!--        * {-->
+<!--            box-sizing: border-box;-->
+<!--        }-->
+<!---->
+<!--        body, html {-->
+<!--            height: 100%;-->
+<!--            margin: 0;-->
+<!--            font-family: sans-serif;-->
+<!--            /*background-color: #f0f0f0;*/-->
+<!--            display: flex;-->
+<!--            align-items: center;-->
+<!--            justify-content: center;-->
+<!--        }-->
+<!---->
+<!--        .container {-->
+<!--            background-color: white;-->
+<!--            padding: 30px 40px;-->
+<!--            border-radius: 16px;-->
+<!--            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);-->
+<!--            text-align: center;-->
+<!--        }-->
+<!---->
+<!--        input[type="text"] {-->
+<!--            width: 100%;-->
+<!--            padding: 10px;-->
+<!--            margin-top: 15px;-->
+<!--            margin-bottom: 20px;-->
+<!--            border-radius: 8px;-->
+<!--            border: 1px solid #ccc;-->
+<!--            font-size: 13px;-->
+<!--        }-->
+<!---->
+<!--        input[type="submit"] {-->
+<!--            background-color: #2d7fe3;-->
+<!--            color: white;-->
+<!--            border: none;-->
+<!--            padding: 12px 24px;-->
+<!--            font-size: 16px;-->
+<!--            border-radius: 8px;-->
+<!--            cursor: pointer;-->
+<!--        }-->
+<!---->
+<!--        input[type="submit"]:hover {-->
+<!--            background-color: #0b3069;-->
+<!--        }-->
+<!---->
+<!--        h2 {-->
+<!--            margin-bottom: 20px;-->
+<!--        }-->
+<!--    </style>-->
+<!--</head>-->
+<!--<body style="text-align:center; margin-top:100px;">-->
+<!--<div class="container">-->
+<!--    <h2>کد ارسال شده به شماره --><?php //echo $_SESSION['phone']; ?><!-- را وارد کنید</h2>-->
+<!--    <form method="post" action="otp_check.php">-->
+<!--        <input type="text" name="otp_input" required>-->
+<!--        <br><br>-->
+<!--        <input type="submit" value="تایید">-->
+<!--    </form>-->
+<!--</div>-->
+<!--</body>-->
+<!--</html>-->

@@ -61,11 +61,23 @@ session_start();
 </head>
 <body style="text-align:center; margin-top:100px;">
 <div class="container">
-<h2>کد ارسال شده به شماره <?php echo $_SESSION['mobile']; ?> را وارد کنید</h2>
-<form method="post" action="reservation_save_request.php">
+
+
+<h2>کد ارسال شده به شماره <?php echo $_SESSION['phone']; ?> را وارد کنید</h2>
+<form method="post" action="otp_check.php">
     <input type="text" name="otp_input" required>
+    <?php
+    if (isset($_SESSION['message'])):
+        ?>
+        <p style="color: red"><?php
+            echo $_SESSION['message'];
+            unset($_SESSION['message']);
+            ?></p>
+    <?php
+    endif; ?>
     <br><br>
     <input type="submit" value="تایید">
+
 </form>
 </div>
 </body>

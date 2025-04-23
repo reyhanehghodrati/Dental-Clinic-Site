@@ -52,12 +52,22 @@ $_SESSION["token-expire"] = time() + 3600;
         <input type="hidden" name="time_id" id="timeIdInput">
         <input type="hidden" name="tarikh" id="tarikhInput">
 
-                <label>کد امنیتی</label>
-                <img src="../php/captcha.php" alt="captcha code">
-                <input type="text" name="captcha_input" placeholder="کد را وارد کنید ">
+<!--                <label>کد امنیتی</label>-->
+<!--                <img src="../php/captcha.php" alt="captcha code">-->
+<!--                <input type="text" name="captcha_input" placeholder="کد را وارد کنید ">-->
 
         <button type="submit" >ثبت نوبت</button>
     </form>
+
+    <?php
+    if (isset($_SESSION['message'])):
+        ?>
+        <p style="color: red"><?php
+            echo $_SESSION['message'];
+            unset($_SESSION['message']);
+            ?></p>
+    <?php
+    endif; ?>
     <div id="responseMessage" style="margin-top: 20px;"></div>
 </div>
 
