@@ -34,12 +34,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 //    echo json_encode(['post_data' => $_POST], JSON_UNESCAPED_UNICODE);
 //    exit;
 
+
     $name = $_POST['full_name'] ?? '';
     $phone = $_POST['phone'] ?? '';
     $email = isset($_POST['email']) ? mysqli_real_escape_string($conn, $_POST['email']) : '';
     $doctor_id = intval($_POST['doctor_id'] ?? 0);
     $time_id = intval($_POST['time_id'] ?? 0);
     $tarikh = $_POST['tarikh'] ?? '';
+    $week=$_POST['week']??'';
 
     if (!$name || !$phone || !$doctor_id || !$time_id || !$tarikh) {
 $_SESSION['message'] = '<div style="padding: 10px; background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; border-radius: 5px;">اطلاعات ناقص است</div>';
@@ -49,6 +51,14 @@ $_SESSION['message'] = '<div style="padding: 10px; background-color: #f8d7da; co
         exit;
     }
 
+//    ذخیره توی سشن
+    $_SESSION['full_name']=$name;
+    $_SESSION['email']= $email;
+    $_SESSION['email']=$phone;
+    $_SESSION['week']=$week;
+    $_SESSION['time_id']=$time_id;
+    $_SESSION['tarikh']=$tarikh;
+    $_SESSION['doctor_id']=$doctor_id;
 
     $quary_time_id = "SELECT * FROM reservation_schedule_slots WHERE id = $time_id";
     $checkResult = mysqli_query($conn, $quary_time_id);
@@ -124,7 +134,7 @@ $_SESSION['message'] = '<div style="padding: 10px; background-color: #f8d7da; co
     $stmt->bind_param("sssiisi", $name, $email, $phone, $doctor_id, $time_id, $tarikh,$STATUS0);
     if ($stmt->execute()) {
         $request_id=$conn->insert_id;
-        $_SESSION['message'] = "<p style='color: #42e230;'>نوبت با موفقیت رزرو شد</p>";
+//        $_SESSION['message'] = "<p style='color: #42e230;'>نوبت ب شد</p>";
 
 //        header('Content-type:application/json');
 //        echo json_encode(['success' => true, 'message' => 'نوبت با موفقیت رزرو شد'], JSON_UNESCAPED_UNICODE);
