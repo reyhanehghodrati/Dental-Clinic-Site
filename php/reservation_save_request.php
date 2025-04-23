@@ -9,11 +9,11 @@ function alert($msg)
     echo "<script type='text/javascript'>alert('$msg');</script>";
 }
 
-//if(!isset($_POST['captcha_input'])&&!isset($_SESSION['captcha'])){
-//    echo json_encode(['success' => false, 'message' => ' کد امنیتی تنظیم نشده است '], JSON_UNESCAPED_UNICODE);
-//    exit();
-//}
-//if($_POST['captcha_input']===$_SESSION['captcha']) {
+if(!isset($_POST['captcha_input'])&&!isset($_SESSION['captcha'])){
+    echo json_encode(['success' => false, 'message' => ' کد امنیتی تنظیم نشده است '], JSON_UNESCAPED_UNICODE);
+    exit();
+}
+if($_POST['captcha_input']===$_SESSION['captcha']) {
 
     if (!isset($_POST["token"]) || !isset($_SESSION["token"])) {
         exit("token not set");
@@ -111,8 +111,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         VALUES (?, ?, ?, ?, ?,?,?)
     ");
     $stmt->bind_param("sssiisi", $name, $email, $phone, $doctor_id, $time_id, $tarikh,$STATUS0);
-
     if ($stmt->execute()) {
+        $request_id=$conn->insert_id;
 //        header('Content-type:application/json');
 //        echo json_encode(['success' => true, 'message' => 'نوبت با موفقیت رزرو شد'], JSON_UNESCAPED_UNICODE);
     } else {
@@ -121,15 +121,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit();
     }
     $_SESSION['otp'] = rand(1000, 9999);
+    $otp=$_SESSION['otp'];
     $sms = new SendSms();
-    $sms->sendMsgToUser($_POST['phone'], $_SESSION['otp']);
+    $sms->sendMsgToUser($_POST['phone'], $otp);
+    $phone=$_SESSION['phone'];
+    $_SESSION['request_id']=$request_id;
     $stmt->close();
+
+    $stmt2 = $conn->prepare("
+        INSERT INTO reservation_phone_numbers (phone_number , code, status,request_id) 
+        VALUES (?, ?, ?,?)
+    ");
+    $stmt2->bind_param("siii", $phone, $otp, $STATUS0,$request_id);
+    $stmt2->execute();
+
         }
-//    }
+
+
+
+    }
 
 }
 else{
     alert('کد امنیتی نادرست  است');
+    exit();
 //    echo json_encode(['success' => false, 'message' => ' کد امنیتی نادرست  است '], JSON_UNESCAPED_UNICODE);
 }
 
@@ -194,7 +209,7 @@ else{
 </head>
 <body style="text-align:center; margin-top:100px;">
 <div class="container">
-    <h2>کد ارسال شده به شماره <?php echo $phone; ?> را وارد کنید</h2>
+    <h2>کد ارسال شده به شماره <?php echo $_SESSION['phone']; ?> را وارد کنید</h2>
     <form method="post" action="otp_check.php">
         <input type="text" name="otp_input" required>
         <br><br>
