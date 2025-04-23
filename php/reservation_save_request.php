@@ -10,7 +10,7 @@ function alert($msg)
 }
 //
 //if(!isset($_POST['captcha_input'])&&!isset($_SESSION['captcha'])){
-//$_SESSION['message'] = "<p style='color: red;'>کد امنیتی تنظیم نشده است </p>";
+//$_SESSION['message'] = '<div style="padding: 10px; background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; border-radius: 5px;">کد امنیتی تنظیم نشده است</div>';
 //header("Location: ../html/reserv.php");
 //
 ////    echo json_encode(['success' => false, 'message' => ' کد امنیتی تنظیم نشده است '], JSON_UNESCAPED_UNICODE);
@@ -42,7 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $tarikh = $_POST['tarikh'] ?? '';
 
     if (!$name || !$phone || !$doctor_id || !$time_id || !$tarikh) {
-        $_SESSION['message'] = "<p style='color: red;'>اطلاعات ناقص است</p>";
+$_SESSION['message'] = '<div style="padding: 10px; background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; border-radius: 5px;">اطلاعات ناقص است</div>';
         header("Location: ../html/reserv.php");
 
 //        echo json_encode(['success' => false, 'message' => 'اطلاعات ناقص است'], JSON_UNESCAPED_UNICODE);
@@ -67,7 +67,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $input_end_time = DateTime::createFromFormat('Y-m-d H', "$tarikh $end_hour",$time_zone);
 
     if (!$input_start_time  || !$input_end_time) {
-        $_SESSION['message'] = "<p style='color: red;'>تاریخ انتخاب شده فرمتش معتبر نیست</p>";
+        $_SESSION['message'] = '<div style="padding: 10px; background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; border-radius: 5px;">تاریخ انتخاب شده فرمتش معتبر نیست</div>';
         header("Location: ../html/reserv.php");
 
 //        echo json_encode([
@@ -79,7 +79,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($input_start_time < $now || $input_start_time > $two_week ) {
         if($input_end_time<$now){
-            $_SESSION['message'] = "<p style='color: red;'>تاریخ انتخاب شده معتبر نیست</p>";
+            $_SESSION['message'] = '<div style="padding: 10px; background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; border-radius: 5px;">تاریخ انتخاب شده معتبر نیست</div>';
 //            alert("تاریخ انتخاب شده معتبر نیست");
 //            echo json_encode(['success' => false, 'message' => 'تاریخ انتخاب شده معتبر نیست'], JSON_UNESCAPED_UNICODE);
             header("Location: ../html/reserv.php");
@@ -109,7 +109,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $reserved = $row['reserved'] ?? 0;
 
     if ($reserved >= $max_capacity) {
-        $_SESSION['message'] = "<p style='color: red;'>ظرفیت این نوبت پر شده است</p>";
+        $_SESSION['message'] = '<div style="padding: 10px; background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; border-radius: 5px;">ظرفیت این نوبت پر شده است</div>';
         header("Location: ../html/reserv.php");
 //        alert("ظرفیت این نوبت پر شده است");
 //        echo json_encode(['success' => false, 'message' => 'ظرفیت این نوبت پر شده است'], JSON_UNESCAPED_UNICODE);
@@ -129,7 +129,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 //        header('Content-type:application/json');
 //        echo json_encode(['success' => true, 'message' => 'نوبت با موفقیت رزرو شد'], JSON_UNESCAPED_UNICODE);
     } else {
-        $_SESSION['message'] = "<p style='color: red;'>خطا در ذخیره اطلاعات</p>";
+        $_SESSION['message'] = '<div style="padding: 10px; background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; border-radius: 5px;">خطا در ذخیره اطلاعات</div>';
         header("Location: ../html/reserv.php");
 //        alert('خطا در ذخیره اطلاعات');
 //        echo json_encode(['success' => false, 'message' => 'خطا در ذخیره اطلاعات'], JSON_UNESCAPED_UNICODE);
