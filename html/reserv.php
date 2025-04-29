@@ -3,6 +3,8 @@ session_start();
 $_SESSION["token"] = bin2hex(random_bytes(32));
 // expiration token:
 $_SESSION["token-expire"] = time() + 3600;
+$old_values=$_SESSION['old_values'] ?? [];
+unset($_SESSION['old_values']);
 ?>
 
 <!DOCTYPE html>
@@ -25,100 +27,146 @@ $_SESSION["token-expire"] = time() + 3600;
     <h2>فرم رزرو نوبت</h2>
     <form id="reservationForm" method="POST" action="../php/reservation_save_request.php">
         <label>نام و نام خانوادگی:</label>
-        <input type="text" name="full_name" value="<?= $_SESSION['full_name'] ?? '' ?>" required>
+        <input type="text" name="full_name" value="<?php echo $old_values['full_name'] ?? '' ?>" required>
 
         <label>ایمیل:</label>
-        <input type="email" name="email" value="<?= $_SESSION['email'] ?? '' ?>" required>
+        <input type="email" name="email" value="<?php echo $old_values['email'] ?? '' ?>" required>
 
         <label>شماره تماس:</label>
-        <input type="tel" name="phone" value="<?= $_SESSION['phone'] ?? '' ?>" required>
+        <input type="tel" name="phone" value="<?php echo $old_values['phone'] ?? '' ?>" required>
 
         <label>پزشک:</label>
-        <select id="doctorSelect" name="doctor_id" required>
+        <select id="doctorSelect" name="doctor_id"  required>
             <option value="">انتخاب پزشک</option>
             <?php require_once '../php/reservation_docs_get.php'; ?>
         </select>
 
         <label>هفته:</label>
         <select id="weekSelect" name="week">
-            <option value="0" <?= isset($_SESSION['week']) && $_SESSION['week'] == '0' ? 'selected' : '' ?>>این هفته</option>
-            <option value="1" <?= isset($_SESSION['week']) && $_SESSION['week'] == '1' ? 'selected' : '' ?>>هفته آینده</option>
-            <option value="2" <?= isset($_SESSION['week']) && $_SESSION['week'] == '2' ? 'selected' : '' ?>>دو هفته بعد</option>
+            <option value="0" <?= (isset($old_values['week']) && $old_values['week'] == 0) ? 'selected' : '' ?>>این هفته</option>
+            <option value="1" <?= (isset($old_values['week']) && $old_values['week'] == 1) ? 'selected' : '' ?>>هفته آینده</option>
+            <option value="2" <?= (isset($old_values['week']) && $old_values['week'] == 2) ? 'selected' : '' ?>>دو هفته بعد</option>
         </select>
 
         <label>نوبت:</label>
         <div id="timeContainer">ابتدا پزشک را انتخاب کنید</div>
-        <input type="hidden" name="token" value="<?= $_SESSION['token'] ?>"/>
-        <input type="hidden" name="time_id" id="timeIdInput" value="<?= $_SESSION['time_id'] ?? '' ?>">
-        <input type="hidden" name="tarikh" id="tarikhInput" value="<?= $_SESSION['tarikh'] ?? '' ?>">
+        <input type="hidden" name="token" value="<?= $_SESSION["token"] ?>"/>
+        <input type="hidden" name="time_id" id="timeIdInput" value="<?php echo $old_values['time_id'] ?? '' ?>">
+        <input type="hidden" name="tarikh" id="tarikhInput" value="<?php echo $old_values['tarikh'] ?? '' ?>">
 
-        <button type="submit">ثبت نوبت</button>
+                        <label>کد امنیتی</label>
+                        <img src="../php/captcha.php" alt="captcha code">
+                        <input type="text" name="captcha_input" placeholder="کد را وارد کنید " value="<?php echo $old_values['captcha'] ?? '' ?>">
+
+        <button type="submit" >ثبت نوبت</button>
     </form>
 
+    <?php
+    if (isset($_SESSION['message'])):
+        ?>
+        <p style="color: red"><?php
+            echo $_SESSION['message'];
+            unset($_SESSION['message']);
+            ?></p>
+    <?php
+    endif; ?>
     <div id="responseMessage" style="margin-top: 20px;"></div>
+</div>
 
-    <script>
-        const doctorSelect = document.getElementById('doctorSelect');
-        const weekSelect = document.getElementById('weekSelect');
-        const timeContainer = document.getElementById('timeContainer');
-        const timeIdInput = document.getElementById('timeIdInput');
-        const tarikhInput = document.getElementById('tarikhInput');
+<script>
+    const doctorSelect = document.getElementById('doctorSelect');
+    const weekSelect = document.getElementById('weekSelect');
+    const timeContainer = document.getElementById('timeContainer');
+    const reservationForm = document.getElementById('reservationForm');
+    const responseMessage = document.getElementById('responseMessage');
 
-        const savedTimeId = "<?= $_SESSION['time_id'] ?? '' ?>";
-        const savedDate = "<?= $_SESSION['tarikh'] ?? '' ?>";
-        const savedDoctor = "<?= $_SESSION['doctor_id'] ?? '' ?>";
-        const savedWeek = "<?= $_SESSION['week'] ?? '' ?>";
+    const savedTimeId = "<?= $old_values['time_id'] ?? '' ?>";
+    const savedDate = "<?= $old_values['tarikh'] ?? '' ?>";
+    // تابع بارگذاری نوبت‌ها
+    function loadTimes() {
+        const doctorId = doctorSelect.value;
+        const week = weekSelect.value;
 
-        function loadTimes() {
-            const doctorId = doctorSelect.value;
-            const week = weekSelect.value;
+        if (doctorId) {
+            fetch(`../php/reservation_nobat_get.php?doctor_id=${doctorId}&week=${week}`)
+                .then(response => response.json())
+                .then(data => {
+                    console.log("داده‌های دریافت شده از سرور:", data);
 
-            if (doctorId) {
-                fetch(`../php/reservation_nobat_get.php?doctor_id=${doctorId}&week=${week}`)
-            .then(response => response.json())
-                    .then(data => {
-                        timeContainer.innerHTML = '';
-                        data.forEach(item => {
-                            const span = document.createElement('span');
-                            span.classList.add('time-slot');
-                            span.setAttribute('data-time-id', item.time_id);
-                            span.setAttribute('data-date-miladi', item.date_miladi);
-                            span.innerText = ${item.day_of_week} (${item.date_shamsi}) - ${item.time_slot};
+                    timeContainer.innerHTML = ''; // پاکسازی محتویات قبلی
 
-                            if (item.capacity_left <= 0) {
-                                span.classList.add('disabled');
-                                span.style.backgroundColor = '#ccc';
-                                span.style.cursor = 'not-allowed';
-                                span.style.color = '#777';
-                                span.title = 'ظرفیت تکمیل شده';
-                            } else {
-                                span.addEventListener("click", function () {
-                                    document.querySelectorAll(".time-slot").forEach(t => t.classList.remove("selected"));
-                                    this.classList.add("selected");
-                                    timeIdInput.value = this.getAttribute('data-time-id');
-                                    tarikhInput.value = this.getAttribute('data-date-miladi');
-                                });
+                    data.forEach(item => {
+                        const span = document.createElement('span');
+                        span.classList.add('time-slot');
+                        span.setAttribute('data-time', item.time_slot);
+                        span.setAttribute('data-day', item.day_of_week);
+                        span.setAttribute('data-date', item.date_shamsi);
+                        span.innerText = `${item.day_of_week} (${item.date_shamsi}) - ${item.time_slot}`;
 
-                                if (item.time_id === savedTimeId && item.date_miladi === savedDate) {
-                                    span.classList.add("selected");
-                                }
+                        // افزودن data-time_id به span (برای ذخیره time_id در درون data attributes)
+                        span.setAttribute('data-time-id', item.time_id);
+
+                        // بررسی ظرفیت و تغییر استایل نوبت پر
+                        if (item.capacity_left <= 0) {
+                            span.style.backgroundColor = '#ccc';
+                            span.style.cursor = 'not-allowed';
+                            span.style.color = '#777';
+                            span.title = 'ظرفیت تکمیل شده';
+                            span.classList.add('disabled');
+                        } else {
+                            span.addEventListener("click", function () {
+                                document.querySelectorAll(".time-slot").forEach(t => t.classList.remove("selected"));
+                                this.classList.add("selected");
+
+                                // پر کردن input مخفی
+                                document.getElementById("timeIdInput").value = this.getAttribute('data-time-id');
+                                document.getElementById("tarikhInput").value = item.date_miladi; // تاریخ میلادی ذخیره می‌شود
+                            });
+                            if (savedTimeId && savedDate && item.time_id === savedTimeId && item.date_miladi === savedDate) {
+                                span.classList.add("selected");
                             }
-                            timeContainer.appendChild(span);
-                        });
-                    })
-                    .catch(error => console.log('خطا در بارگذاری نوبت‌ها:', error));
-            }
+                        }
+                        timeContainer.appendChild(span);
+                    });
+                })
+                .catch(error => console.log('خطا در بارگذاری نوبت‌ها:', error));
         }
+    }
 
-        document.addEventListener('DOMContentLoaded', function () {
-            if (savedDoctor) doctorSelect.value = savedDoctor;
-            if (savedWeek) weekSelect.value = savedWeek;
-            loadTimes();
-        });
+    // ارسال رزرو
+    // reservationForm.addEventListener('submit', function (e) {
+    //     e.preventDefault(); // جلوگیری از ارسال فرم به‌صورت پیش‌فرض
+    //
+    //     const formData = new FormData(reservationForm);
+    //     console.log("timeInput:",formData.get('timeInput'));
+    //     fetch('../php/reservation_save_request.php', {
+    //         method: 'POST',
+    //         body: formData
+    //     })
+    //         .then(response => response.json())
+    //         .then(data => {
+    //             responseMessage.innerHTML = `<div style="padding: 10px; background-color: ${data.status === 'success' ? '#d4edda' : '#f8d7da'}; color: ${data.status === 'success' ? '#155724' : '#721c24'}; border: 1px solid ${data.status === 'success' ? '#c3e6cb' : '#f5c6cb'}; border-radius: 5px;">${data.message}</div>`;
+    //
+    //             if (data.status === 'success') {
+    //
+    //                 // reservationForm.reset();  // ریست کردن فرم پس از ارسال موفق
+    //                 // loadTimes();  // بارگذاری دوباره نوبت‌ها برای نمایش ظرفیت‌های جدید
+    //                 window.location.href="../php/otp_send_index.php";
+    //             }
+    //         })
+    //         .catch(error => {
+    //             console.error('Error:', error);
+    //             responseMessage.innerHTML = '<div style="padding: 10px; background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; border-radius: 5px;">خطا در ارسال اطلاعات. لطفا دوباره تلاش کنید.</div>';
+    //         });
+    // });
 
-        doctorSelect.addEventListener('change', loadTimes);
-        weekSelect.addEventListener('change', loadTimes);
-    </script>
+    // افزودن EventListener برای تغییر پزشک و هفته
+    doctorSelect.addEventListener('change', loadTimes);
+    weekSelect.addEventListener('change', loadTimes);
+
+    // بارگذاری نوبت‌ها پس از لود شدن صفحه
+    document.addEventListener('DOMContentLoaded', loadTimes);
+</script>
 
 </body>
 </html>
