@@ -77,10 +77,9 @@ unset($_SESSION['old_values']);
             ?></p>
     <?php
     endif; ?>
-    <button id="sendBtn" onclick="sendOTP()">ارسال کد</button>
+    <input type="submit" value="ارسال مجدد کد">
     <p id="message"></p>
     <p id="timer"></p>
-    <br><br>
     <input type="submit" value="تایید">
 
 </form>
