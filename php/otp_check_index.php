@@ -96,13 +96,12 @@ $expires_timestamp=$row ? strtotime($row['expire_time']) : null;
 ?>
 <script>
     let timer;
-    const expiresat = <?php echo $expires_timestamp ?? 'null'; ?>;
     const resendButton = document.getElementById('resendButton');
     const countdownText = document.getElementById('countdownText');
     const createAt=<?php echo $created_timestamp ?? 'null'; ?>;
     const delaySeconds = 10;
 
-    let countdown = 10;
+    let countdown = 5;
     console.log("countdown:", countdown);
     function startCountdown() {
         if (countdown <= 0) {
@@ -148,7 +147,7 @@ $expires_timestamp=$row ? strtotime($row['expire_time']) : null;
         .catch(error => {
             console.error('خطا در ریسند:', error);
         });
-        countdown = 30;
+        countdown = 5;
 
         startCountdown();
     });

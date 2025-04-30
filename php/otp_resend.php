@@ -9,7 +9,6 @@ header('Content-Type: application/json');
 $data = json_decode(file_get_contents('php://input'), true);
 $action = $data['action'] ?? null;
 
-
 // چک کردن موجود بودن request_id
 if (!isset($_SESSION['request_id'])) {
     echo json_encode(['status' => 'error', 'message' => 'شناسه درخواست یافت نشد.']);
@@ -18,6 +17,7 @@ if (!isset($_SESSION['request_id'])) {
 
 $request_id = $_SESSION['request_id'];
 $now = new DateTime('now', new DateTimeZone('Asia/Tehran'));
+
 
 $sql = "SELECT * FROM reservation_phone_numbers WHERE request_id = ? ORDER BY id DESC LIMIT 1";
 $stmt = $conn->prepare($sql);
@@ -33,16 +33,29 @@ if (!$row) {
 
 $phone = $row['phone_number'] ?? $row['phone'];
 $otp = rand(1000, 9999);
-$expires_at = $now->add(new DateInterval('PT2M'))->format('Y-m-d H:i:s'); // اعتبار دو دقیقه
+$expires_at = $now->add(new DateInterval('PT10S'))->format('Y-m-d H:i:s');
 $_SESSION['expire']=$expires_at;
 
+$expire_time = new DateTime($row['expire_time'], new DateTimeZone('Asia/Tehran'));
+$creat_time = new DateTime($row['create_in'], new DateTimeZone('Asia/Tehran'));
 
+//error_log('expiretime'. $expire_time);
+//error_log('now'. $now);
+
+if($expire_time > $now){
+
+    echo json_encode(['status'=> 'error' , 'message' =>' کد اعتبار دارد ']);
+    exit;
+}
 
 $insertSql = "INSERT INTO reservation_phone_numbers (phone_number, code, status, request_id, expire_time)
               VALUES (?, ?, 0, ?, ?)";
 $insertStmt = $conn->prepare($insertSql);
 $insertStmt->bind_param("siss", $phone, $otp, $request_id, $expires_at);
 $insertStmt->execute();
+
+
+
 
 // ارسال پیامک
 $sms = new SendSms();
