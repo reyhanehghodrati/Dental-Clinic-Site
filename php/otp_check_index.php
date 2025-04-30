@@ -100,11 +100,9 @@ $expires_timestamp=$row ? strtotime($row['expire_time']) : null;
     const resendButton = document.getElementById('resendButton');
     const countdownText = document.getElementById('countdownText');
     const createAt=<?php echo $created_timestamp ?? 'null'; ?>;
-    const delaySeconds = 30;
+    const delaySeconds = 10;
 
-    let countdown = 30;
-    console.log("createAt:", createAt);
-    console.log("createAt + delaySeconds:", createAt + delaySeconds);
+    let countdown = 10;
     console.log("countdown:", countdown);
     function startCountdown() {
         if (countdown <= 0) {
