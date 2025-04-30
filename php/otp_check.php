@@ -37,7 +37,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             exit;
         }
             $conn->query("update reservation_phone_numbers set status=1 where request_id='$request_id' and id='{$row['id']}'");
-            $conn->query("update reservation_requests set status=1 where id='$request_id' and STATUS=0  and id='{$row['id']}'");
+            $conn->query("update reservation_requests set status=1 where id='$request_id' and STATUS=0 ");
             $_SESSION['message'] = '<div style="padding: 10px; background-color: #fafafa; color: #37ff00; border: 1px solid #37ff00; border-radius: 5px;">رزرو با موفقیت انجام شد</div>';
 
             header("Location: ../html/reserv.php");

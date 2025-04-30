@@ -93,8 +93,6 @@ $result = $stmt->get_result();
 $row = $result->fetch_assoc();
 $created_timestamp = $row ? strtotime($row['create_in']) : null;
 $expires_timestamp=$row ? strtotime($row['expire_time']) : null;
-var_dump(date('Y-m-d H:i:s', $created_timestamp));
-var_dump(date('Y-m-d H:i:s', $expires_timestamp));
 ?>
 <script>
     let timer;
@@ -102,11 +100,9 @@ var_dump(date('Y-m-d H:i:s', $expires_timestamp));
     const resendButton = document.getElementById('resendButton');
     const countdownText = document.getElementById('countdownText');
     const createAt=<?php echo $created_timestamp ?? 'null'; ?>;
-    const delaySeconds = 50;
+    const delaySeconds = 30;
 
-    let countdown = (createAt && expiresat && (expiresat < createAt + 50))
-        ? (createAt + 50 - expiresat)
-        : 0;
+    let countdown = 30;
     console.log("createAt:", createAt);
     console.log("createAt + delaySeconds:", createAt + delaySeconds);
     console.log("countdown:", countdown);
@@ -154,7 +150,7 @@ var_dump(date('Y-m-d H:i:s', $expires_timestamp));
         .catch(error => {
             console.error('خطا در ریسند:', error);
         });
-
+        countdown = 30;
 
         startCountdown();
     });
