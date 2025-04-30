@@ -221,7 +221,7 @@ if ($row && new DateTime($row['expire_time'],new DateTimeZone('Asia/Tehran')) > 
 
 $otp = rand(1000, 9999);
 
-$expires_at = $now->add(new DateInterval('PT50S'))->format('Y-m-d H:i:s');
+$expires_at = $now->add(new DateInterval('PT10S'))->format('Y-m-d H:i:s');
 //$_SESSION['expire']=$expires_at;
 $sql = "INSERT INTO reservation_phone_numbers (phone_number, code,status,request_id, expire_time)
         VALUES (?, ? , ? , ? , ?)
