@@ -19,7 +19,6 @@ if (!isset($_SESSION['request_id'])) {
 $request_id = $_SESSION['request_id'];
 $now = new DateTime('now', new DateTimeZone('Asia/Tehran'));
 
-// بررسی اینکه آیا اجازه ریسند داریم (در صورت نیاز می‌تونی تایم چک کنی)
 $sql = "SELECT * FROM reservation_phone_numbers WHERE request_id = ? ORDER BY id DESC LIMIT 1";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("s", $request_id);
