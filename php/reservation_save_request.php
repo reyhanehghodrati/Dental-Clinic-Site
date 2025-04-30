@@ -221,15 +221,14 @@ if ($row && new DateTime($row['expire_time'],new DateTimeZone('Asia/Tehran')) > 
 
 $otp = rand(1000, 9999);
 
-$expires_at = $now->add(new DateInterval('PT20S'))->format('Y-m-d H:i:s');
-
-$sql = "INSERT INTO reservation_phone_numbers (phone_number, code,status,request_id, expire_time, resend_code)
-        VALUES (?, ? , ? , ? , ?, 1)
+$expires_at = $now->add(new DateInterval('PT50S'))->format('Y-m-d H:i:s');
+//$_SESSION['expire']=$expires_at;
+$sql = "INSERT INTO reservation_phone_numbers (phone_number, code,status,request_id, expire_time)
+        VALUES (?, ? , ? , ? , ?)
       ";
 
 $stmt = $conn->prepare($sql);
 $stmt->execute([ $phone, $otp, $STATUS0,$request_id,$expires_at]);
-
 $sms = new SendSms();
 $sms->sendMsgToUser($_POST['phone'], $otp);
 $_SESSION['request_id']=$request_id;

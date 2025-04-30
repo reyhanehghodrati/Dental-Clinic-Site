@@ -1,5 +1,6 @@
 <?php
 session_start();
+require_once 'config.php';
 $old_values=$_SESSION['old_values'] ?? [];
 unset($_SESSION['old_values']);
 ?>
@@ -18,7 +19,6 @@ unset($_SESSION['old_values']);
             height: 100%;
             margin: 0;
             font-family: sans-serif;
-            /*background-color: #f0f0f0;*/
             display: flex;
             align-items: center;
             justify-content: center;
@@ -63,69 +63,104 @@ unset($_SESSION['old_values']);
 </head>
 <body style="text-align:center; margin-top:100px;">
 <div class="container">
-
-
-<h2>کد ارسال شده را وارد کنید</h2>
-<form method="post" action="otp_check.php">
-    <input type="text" name="otp_input" value="<?php echo $old_values['otp_input'] ?? '' ?>" required>
-    <?php
-    if (isset($_SESSION['message'])):
-        ?>
-        <p style="color: red"><?php
-            echo $_SESSION['message'];
-            unset($_SESSION['message']);
-            ?></p>
-    <?php
-    endif; ?>
-    <input type="submit" value="ارسال مجدد کد">
-    <p id="message"></p>
-    <p id="timer"></p>
-    <input type="submit" value="تایید">
-
-</form>
+    <h2>کد ارسال شده را وارد کنید</h2>
+    <form method="post" action="otp_check.php" id="otpForm">
+        <input type="text" name="otp_input" value="<?php echo $old_values['otp_input'] ?? '' ?>" required>
+        <?php
+        if (isset($_SESSION['message'])):
+            ?>
+            <p style="color: red"><?php
+                echo $_SESSION['message'];
+                unset($_SESSION['message']);
+                ?></p>
+        <?php
+        endif; ?>
+        <p id="message"></p>
+        <p id="timer"></p>
+        <input type="submit" value="تایید">
+    </form>
+<br>
+    <button id="resendButton" disabled>ارسال مجدد کد</button>
+    <span id="countdownText">(فعال‌سازی در ۳۰ ثانیه)</span>
 </div>
-
+<?php
+$request_id = $_SESSION['request_id'];
+$sql = "SELECT create_in,expire_time FROM reservation_phone_numbers WHERE request_id = ? ORDER BY id DESC LIMIT 1";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("s", $request_id);
+$stmt->execute();
+$result = $stmt->get_result();
+$row = $result->fetch_assoc();
+$created_timestamp = $row ? strtotime($row['create_in']) : null;
+$expires_timestamp=$row ? strtotime($row['expire_time']) : null;
+var_dump(date('Y-m-d H:i:s', $created_timestamp));
+var_dump(date('Y-m-d H:i:s', $expires_timestamp));
+?>
 <script>
-    let countdown;
-    let timeLeft = 0;
+    let timer;
+    const expiresat = <?php echo $expires_timestamp ?? 'null'; ?>;
+    const resendButton = document.getElementById('resendButton');
+    const countdownText = document.getElementById('countdownText');
+    const createAt=<?php echo $created_timestamp ?? 'null'; ?>;
+    const delaySeconds = 50;
 
-    // function sendOTP() {
-    //     const phone = document.getElementById("phone").value;
-    //     const sendBtn = document.getElementById("sendBtn");
-    //
-    //     fetch("send_otp.php", {
-    //         method: "POST",
-    //         headers: {"Content-Type": "application/x-www-form-urlencoded"},
-    //         body: "phone=" + encodeURIComponent(phone)
-    //     })
-    //         .then(res => res.text())
-    //         .then(data => {
-    //             document.getElementById("message").innerText = data;
-    //             timeLeft = 30;
-    //             startTimer();
-    //             sendBtn.disabled = true;
-    //         });
-    // }
+    let countdown = (createAt && expiresat && (expiresat < createAt + 50))
+        ? (createAt + 50 - expiresat)
+        : 0;
+    console.log("createAt:", createAt);
+    console.log("createAt + delaySeconds:", createAt + delaySeconds);
+    console.log("countdown:", countdown);
+    function startCountdown() {
+        if (countdown <= 0) {
+            resendButton.disabled = false;
+            countdownText.textContent = "اکنون قابل استفاده است";
+            return;
+        }
 
-    function startTimer() {
-        clearInterval(countdown);
-        updateTimerDisplay();
+        resendButton.disabled = true;
+        countdownText.textContent = `فعال‌سازی در ${countdown} ثانیه`;
 
-        countdown = setInterval(() => {
-            timeLeft--;
-            updateTimerDisplay();
-
-            if (timeLeft <= 0) {
-                clearInterval(countdown);
-                document.getElementById("sendBtn").disabled = false;
-                document.getElementById("timer").innerText = "می‌تونی دوباره کد بگیری.";
+        timer = setInterval(() => {
+            countdown--;
+            if (countdown > 0) {
+                countdownText.textContent = `فعال‌سازی در ${countdown} ثانیه`;
+            } else {
+                clearInterval(timer);
+                countdownText.textContent = "اکنون قابل استفاده است";
+                resendButton.disabled = false;
             }
-        }, 1000);
-    }
+        }, 1000);}
 
-    function updateTimerDisplay() {
-        document.getElementById("timer").innerText = "زمان باقی‌مانده: " + timeLeft + " ثانیه";
-    }
+    resendButton.addEventListener('click', () => {
+
+
+
+
+        // ارسال درخواست ریسند با fetch
+        fetch('otp_resend.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ action: 'resend' }),
+        })
+
+        .then(response => response.json())
+        .then(data => {
+            console.log('ریسپانس سرور:', data);
+            // نمایش پیام موفقیت یا خطا اگه بخوای
+        })
+
+        .catch(error => {
+            console.error('خطا در ریسند:', error);
+        });
+
+
+        startCountdown();
+    });
+    // شروع تایمر به صورت دستی
+    startCountdown();
 </script>
+
 </body>
 </html>

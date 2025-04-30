@@ -3,32 +3,56 @@ require_once 'config.php';
 require_once 'otp_sendSms.php';
 session_start();
 
-$input = $_POST['otp_input'];
-$request_id=$_SESSION['request_id'];
+header('Content-Type: application/json');
 
-$now = new DateTime('now',new DateTimeZone('Asia/Tehran'));
-$sql="select * from reservation_phone_numbers  request_id='$request_id' and expire_time< '$now'";
-$stmt = mysqli_query($conn, $sql);
-$row = mysqli_fetch_assoc($stmt);
+// گرفتن داده از بدنه JSON
+$data = json_decode(file_get_contents('php://input'), true);
+$action = $data['action'] ?? null;
 
-if ($row) {
-    $_SESSION['message'] = '<div style="padding: 10px; background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; border-radius: 5px;">کد ارسال شده است</div>';
-    $_SESSION['old_values']=[
-        'otp_input'=>$input,
-    ];
-}else{
-    $phone=$row['phone'];
-    $STATUS0=0;
-    $otp = rand(1000, 9999);
-    $expires_at = $now->add(new DateInterval('PT20S'))->format('Y-m-d H:i:s');
-    $sql = "INSERT INTO reservation_phone_numbers (phone_number, code,status,request_id, expire_time, resend_code)
-        VALUES (?, ? , ? , ? , ?, 1)
-      ";
-    $stmt = $conn->prepare($sql);
-    $stmt->execute([ $phone, $otp, $STATUS0,$request_id,$expires_at]);
-    $sms = new SendSms();
-    $sms->sendMsgToUser($_POST['phone'], $otp);
-    $_SESSION['request_id']=$request_id;
-    $stmt->close();
+
+// چک کردن موجود بودن request_id
+if (!isset($_SESSION['request_id'])) {
+    echo json_encode(['status' => 'error', 'message' => 'شناسه درخواست یافت نشد.']);
+    exit;
 }
+
+$request_id = $_SESSION['request_id'];
+$now = new DateTime('now', new DateTimeZone('Asia/Tehran'));
+
+// بررسی اینکه آیا اجازه ریسند داریم (در صورت نیاز می‌تونی تایم چک کنی)
+$sql = "SELECT * FROM reservation_phone_numbers WHERE request_id = ? ORDER BY id DESC LIMIT 1";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("s", $request_id);
+$stmt->execute();
+$result = $stmt->get_result();
+$row = $result->fetch_assoc();
+
+if (!$row) {
+    echo json_encode(['status' => 'error', 'message' => 'درخواستی با این شناسه پیدا نشد.']);
+    exit;
+}
+
+$phone = $row['phone_number'] ?? $row['phone'];
+$otp = rand(1000, 9999);
+$expires_at = $now->add(new DateInterval('PT2M'))->format('Y-m-d H:i:s'); // اعتبار دو دقیقه
+$_SESSION['expire']=$expires_at;
+
+
+
+$insertSql = "INSERT INTO reservation_phone_numbers (phone_number, code, status, request_id, expire_time)
+              VALUES (?, ?, 0, ?, ?)";
+$insertStmt = $conn->prepare($insertSql);
+$insertStmt->bind_param("siss", $phone, $otp, $request_id, $expires_at);
+$insertStmt->execute();
+
+// ارسال پیامک
+$sms = new SendSms();
+$sms->sendMsgToUser($phone, $otp);
+
+// پاسخ موفقیت
+echo json_encode([
+    'status' => 'success',
+    'message' => 'کد مجدد ارسال شد.'
+]);
+exit;
 ?>
