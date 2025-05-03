@@ -38,7 +38,7 @@ unset($_SESSION['old_values']);
         <label>پزشک:</label>
         <select id="doctorSelect" name="doctor_id"  required>
             <option value="">انتخاب پزشک</option>
-            <?php require_once '../php/reservation_docs_get.php'; ?>
+<!--            --><?php //require_once '../php/reservation_docs_get.php'; ?>
         </select>
 
         <label>هفته:</label>

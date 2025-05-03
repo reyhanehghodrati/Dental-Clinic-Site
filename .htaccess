@@ -1,0 +1,7 @@
+RewriteEngine On
+RewriteBase /projee4/
+RewriteRule ^web\\.php$ - [L]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule . /projee4/web.php [L]
+#php_value include_path '.;C:\xampp\htdocs\laravel-prj\config\database.php'

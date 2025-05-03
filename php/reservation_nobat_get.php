@@ -1,8 +1,7 @@
-
 <?php
 header('Content-Type: application/json');
-require_once 'config.php';
 require_once 'jdf.php';
+require_once 'config/database.php';
 
 $doctor_id = isset($_GET['doctor_id']) ? intval($_GET['doctor_id']) : 0;
 $week_offset = isset($_GET['week']) ? intval($_GET['week']) : 0;

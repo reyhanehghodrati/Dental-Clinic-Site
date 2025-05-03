@@ -37,12 +37,22 @@ $expires_at = $now->add(new DateInterval('PT10S'))->format('Y-m-d H:i:s');
 $_SESSION['expire']=$expires_at;
 
 $expire_time = new DateTime($row['expire_time'], new DateTimeZone('Asia/Tehran'));
-$creat_time = new DateTime($row['create_in'], new DateTimeZone('Asia/Tehran'));
 
-//error_log('expiretime'. $expire_time);
-//error_log('now'. $now);
 
-if($expire_time > $now){
+$timestamp = $expire_time->getTimestamp();
+$timestamp_now = $now->getTimestamp();
+
+//$created_timestamp = $result ? strtotime($result) : null;
+//$expires_timestamp=$now_r ? strtotime($now) : null;
+error_log('expiretime'. $timestamp);
+error_log('expiretime'. $expire_time);
+
+error_log('now'. $timestamp_now);
+error_log('now'. $now);
+
+$diff=$timestamp > $timestamp_now;
+error_log("diff".$diff );
+if($timestamp > $timestamp_now){
 
     echo json_encode(['status'=> 'error' , 'message' =>' کد اعتبار دارد ']);
     exit;
